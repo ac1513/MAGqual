@@ -1,0 +1,76 @@
+JOBID = config["JOBID"]
+REFIN = config["REFIN"]
+BIN_LOC = config["BIN_LOC"]
+checkmdb = config["checkm_db_root"]
+
+if BIN_LOC.endswith("/") == False :
+    BIN_LOC = BIN_LOC + "/"
+
+(CLUSTERS,) = glob_wildcards(BIN_LOC + "{CLUSTERS}.fasta")
+
+rule all:
+    input:
+        expand("analysis/prokka/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", JOBID = JOBID, CLUSTERS = CLUSTERS, ext=[ "err", "fna", "faa", "gff", "gbk", "ffn", "sqn", "fsa", "tbl", "log", "txt", "tsv"]),
+        expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID),
+        expand("analysis/{JOBID}_qual_MAGs.txt", JOBID = JOBID)
+
+rule prokka:
+    input:
+        clusters = expand("{BIN_LOC}{{CLUSTERS}}.fasta", BIN_LOC=BIN_LOC)
+    output:
+        file = expand("analysis/prokka/{{JOBID}}/{{CLUSTERS}}/{{CLUSTERS}}.{ext}", ext=[ "err", "fna", "faa", "gff", "gbk", "ffn", "sqn", "fsa", "tbl", "log", "txt", "tsv"])
+    params:
+        dir = "analysis/prokka/{JOBID}/{CLUSTERS}/",
+        prefix = "{CLUSTERS}",
+        prokka = "results/clusters/{CLUSTERS}_short.fasta"
+    conda:
+        "envs/prokka.yaml"
+    threads:
+        20
+    shell:
+        """
+        awk '/^>/{{print substr($1,1,21); next}}{{print}}' < {input.clusters} > {params.prokka}
+        prokka {params.prokka} --outdir {params.dir} --prefix {params.prefix} --cpus {threads} --force
+        rm {params.prokka}
+        """
+
+rule checkm:
+  input:
+      expand("{BIN_LOC}{CLUSTERS}.fasta", BIN_LOC = BIN_LOC, CLUSTERS = CLUSTERS)
+  output:
+      log = expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID),
+      stats = expand("analysis/{JOBID}_unbinned_contigs_stats.tsv", JOBID = JOBID)
+  params:
+      out = expand("analysis/checkm/{JOBID}", JOBID=JOBID),
+      input = BIN_LOC,
+      refin = REFIN,
+      checkmdb = checkmdb
+  threads:
+      20
+  conda:
+      "envs/checkm.yaml"
+  shell:
+      """
+      checkm_db={params.checkmdb}
+      echo ${{checkm_db}} | checkm data setRoot ${{checkm_db}}
+      checkm unbinned -x fasta {params.input} {params.refin} analysis/{JOBID}_unbinned_contigs.fa analysis/{JOBID}_unbinned_contigs_stats.tsv
+      checkm lineage_wf -f {output.log} --tab_table -x fasta -t {threads} {params.input} {params.out}
+      """
+
+rule high_mags:
+    input:
+        prokka = expand("analysis/prokka/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", ext=[ "err", "fna", "faa", "gff", "gbk", "ffn", "sqn", "fsa", "tbl", "log", "txt", "tsv"], CLUSTERS = CLUSTERS, JOBID = JOBID),
+        checkm = expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID)
+    output:
+        txt = "analysis/{JOBID}_qual_MAGs.txt"
+    params:
+        prokka = expand("analysis/prokka/{JOBID}/", JOBID = JOBID),
+        bin_loc = BIN_LOC,
+        jobid = JOBID,
+        out_loc = "analysis/genome_bins/"
+    conda :
+        "envs/py3.yaml"
+    shell:
+        """
+        python workflow/scripts/python/qual_parse.py {params.out_loc} {input.checkm} {params.prokka} {params.bin_loc} {params.jobid} > {output.txt}
+        """
