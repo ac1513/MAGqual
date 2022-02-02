@@ -143,8 +143,7 @@ for cluster in high_clusters:
 plt.figure(figsize=(15, 10))
 ax = sns.scatterplot(data = to_plot, x="Completeness", y="Contamination",
                 hue="qual", size = "length", sizes=(20, 800), alpha = 0.5)
-plt.show()
-
+plt.savefig(job_id + '_mag_qual.png')
 # =============================================================================
 # COPYING FILES INTO QUAL DIRECTORIES
 # =============================================================================
