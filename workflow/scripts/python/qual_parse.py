@@ -14,7 +14,7 @@ import argparse
 import os
 from shutil import copyfile
 import seaborn as sns
-import matplotlib.pyplt as plt
+import matplotlib.pyplot as plt
 
 def qual_cluster(comp, cont):
     if (comp >90) and (cont<5):
