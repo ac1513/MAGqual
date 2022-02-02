@@ -13,6 +13,7 @@ import glob
 import argparse
 import os
 from shutil import copyfile
+import seaborn as sns
 
 def qual_cluster(comp, cont):
     if (comp >90) and (cont<5):
@@ -24,6 +25,24 @@ def qual_cluster(comp, cont):
     else:
         qual = "NA"
     return qual
+
+def gen_qual(comp, cont):
+    if (comp - (cont*5)) >= 50:
+        genome = "y"
+    else:
+        genome = "n"
+    return genome
+
+def len_psearch(prok_loc, cluster):
+    loc = str(prok_loc + str(cluster) + '/*.log')
+    for name in glob.glob(loc):
+        prok_file = name
+        with open(prok_file, 'r') as prok_log:
+            for line in prok_log:
+                if "contigs totalling" in line:
+                    length = line.split(" ")[-2]
+    length = float(length)
+    return length
 
 parser = argparse.ArgumentParser(description='')
 parser.add_argument('output', help='output directory for the organised bins', type=str)
@@ -45,6 +64,9 @@ job_id = args.jobid
 
 checkm_df = pd.read_csv(checkm_log, sep = "\t", index_col = 0)
 checkm_df['qual'] = checkm_df.apply(lambda x: qual_cluster(x['Completeness'], x['Contamination']), axis=1)
+checkm_df['keep'] = checkm_df.apply(lambda x: gen_qual(x['Completeness'], x['Contamination']), axis=1)
+checkm_df["length"] = checkm_df.apply(lambda x: len_psearch(prok_loc, x["Bin Id"]), axis = 1)
+checkm_df = checkm_df.set_index("Bin Id")
 
 high_clusters = checkm_df[checkm_df['qual'].str.contains("high")].index.values.tolist()
 med_qual_clusters = checkm_df[checkm_df['qual'].str.contains("med")].index.values.tolist()
@@ -114,6 +136,15 @@ for cluster in high_clusters:
         high_qual_clusters.append(cluster)
     else:
         near_comp_clusters.append(cluster) # adds high qual that fail trna/rna
+# =============================================================================
+# Basic plot
+# =============================================================================
+
+plt.figure(figsize=(15, 10))
+ax = sns.scatterplot(data = to_plot, x="Completeness", y="Contamination",
+                hue="qual", size = "length", sizes=(20, 800), alpha = 0.5)
+plt.show()
+
 # =============================================================================
 # COPYING FILES INTO QUAL DIRECTORIES
 # =============================================================================
