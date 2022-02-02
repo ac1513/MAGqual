@@ -62,7 +62,7 @@ job_id = args.jobid
 # CHECKM STUFF HERE
 # =============================================================================
 
-checkm_df = pd.read_csv(checkm_log, sep = "\t", index_col = 0)
+checkm_df = pd.read_csv(checkm_log, sep = "\t")
 checkm_df['qual'] = checkm_df.apply(lambda x: qual_cluster(x['Completeness'], x['Contamination']), axis=1)
 checkm_df['keep'] = checkm_df.apply(lambda x: gen_qual(x['Completeness'], x['Contamination']), axis=1)
 checkm_df["length"] = checkm_df.apply(lambda x: len_psearch(prok_loc, x["Bin Id"]), axis = 1)
