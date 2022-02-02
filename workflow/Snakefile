@@ -1,3 +1,5 @@
+configfile: "config/config.yaml"
+
 JOBID = config["JOBID"]
 REFIN = config["REFIN"]
 BIN_LOC = config["BIN_LOC"]
