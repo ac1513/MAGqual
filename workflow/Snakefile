@@ -1,9 +1,19 @@
 configfile: "config/config.yaml"
+cluster_config = "config/cluster.yaml"
 
 JOBID = config["JOBID"]
 REFIN = config["REFIN"]
 BIN_LOC = config["BIN_LOC"]
 checkmdb = config["checkm_db_root"]
+
+
+import yaml
+import os,sys
+
+cluster=dict()
+if os.path.exists(cluster_config):
+    with open(cluster_config) as yml:
+        cluster = yaml.load(yml)
 
 if BIN_LOC.endswith("/") == False :
     BIN_LOC = BIN_LOC + "/"
@@ -27,12 +37,12 @@ rule prokka:
         prokka = "results/clusters/{CLUSTERS}_short.fasta"
     conda:
         "envs/prokka.yaml"
-    threads:
-        20
+    resources:
+      threads=cluster["prokka"]["threads"]
     shell:
         """
         awk '/^>/{{print substr($1,1,21); next}}{{print}}' < {input.clusters} > {params.prokka}
-        prokka {params.prokka} --outdir {params.dir} --prefix {params.prefix} --cpus {threads} --force
+        prokka {params.prokka} --outdir {params.dir} --prefix {params.prefix} --cpus {resources.threads} --force
         rm {params.prokka}
         """
 
@@ -47,15 +57,16 @@ rule checkm:
       input = BIN_LOC,
       refin = REFIN,
       checkmdb = checkmdb
-  threads:
-      20
   conda:
       "envs/checkm.yaml"
+  resources:
+    threads=cluster["checkm"]["threads"]
+    time =cluster["checkm"]["time"]
   shell:
       """
       checkm_db={params.checkmdb}
       echo ${{checkm_db}} | checkm data setRoot ${{checkm_db}}
-      checkm lineage_wf -f {output.log} --tab_table -x fasta -t {threads} {params.input} {params.out}
+      checkm lineage_wf -f {output.log} --tab_table -x fasta -t {resources.threads} {params.input} {params.out}
       """
 
 rule high_mags:
