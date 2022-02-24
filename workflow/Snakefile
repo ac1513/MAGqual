@@ -37,7 +37,9 @@ rule prokka:
     conda:
         "envs/prokka.yaml"
     resources:
-      threads=cluster["prokka"]["threads"]
+      threads=cluster["prokka"]["threads"],
+      mem=cluster["__default__"]["mem"],
+      time=cluster["__default__"]["time"]
     shell:
         """
         awk '/^>/{{print substr($1,1,21); next}}{{print}}' < {input.clusters} > {params.prokka}
@@ -60,7 +62,8 @@ rule checkm:
       "envs/checkm.yaml"
   resources:
     threads=cluster["checkm"]["threads"],
-    time =cluster["checkm"]["time"]
+    time =cluster["checkm"]["time"],
+    mem=cluster["__default__"]["mem"],
   shell:
       """
       checkm_db={params.checkmdb}
