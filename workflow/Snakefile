@@ -84,6 +84,10 @@ rule high_mags:
         out_loc = "analysis/genome_bins/"
     conda :
         "envs/py3.yaml"
+    resources:
+        mem=cluster["__default__"]["mem"],
+        threads=cluster["__default__"]["threads"],
+        time=cluster["__default__"]["time"]
     shell:
         """
         python workflow/scripts/python/qual_parse.py {params.out_loc} {input.checkm} {params.prokka} {params.bin_loc} {params.jobid} > {output.txt}
