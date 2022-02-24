@@ -1,5 +1,5 @@
 configfile: "config/config.yaml"
-cluster_config = "config/cluster.json"
+cluster_json = "config/cluster.json"
 
 JOBID = config["JOBID"]
 REFIN = config["REFIN"]
@@ -10,8 +10,8 @@ import json
 import os,sys
 
 cluster=dict()
-if os.path.exists(cluster_config):
-    with open(cluster_config) as file:
+if os.path.exists(cluster_json):
+    with open(cluster_json) as file:
         cluster = json.load(file)
 
 if BIN_LOC.endswith("/") == False :
