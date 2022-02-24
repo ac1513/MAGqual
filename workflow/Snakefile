@@ -1,5 +1,5 @@
 configfile: "config/config.yaml"
-cluster_config = "config/cluster.yaml"
+cluster_config = "config/cluster.json"
 
 JOBID = config["JOBID"]
 REFIN = config["REFIN"]
