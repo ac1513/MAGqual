@@ -60,7 +60,7 @@ rule checkm:
   conda:
       "envs/checkm.yaml"
   resources:
-    threads=cluster["checkm"]["threads"]
+    threads=cluster["checkm"]["threads"],
     time =cluster["checkm"]["time"]
   shell:
       """
