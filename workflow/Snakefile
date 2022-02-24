@@ -6,14 +6,13 @@ REFIN = config["REFIN"]
 BIN_LOC = config["BIN_LOC"]
 checkmdb = config["checkm_db_root"]
 
-
-import yaml
+import json
 import os,sys
 
 cluster=dict()
 if os.path.exists(cluster_config):
-    with open(cluster_config) as yml:
-        cluster = yaml.load(yml)
+    with open(cluster_config) as json:
+        cluster = json.load(json)
 
 if BIN_LOC.endswith("/") == False :
     BIN_LOC = BIN_LOC + "/"
