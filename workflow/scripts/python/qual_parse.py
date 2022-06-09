@@ -175,7 +175,7 @@ for low in low_qual_clusters:
 
 for NA_bin in NA:
     file = location + NA_bin + ".fasta"
-    copyfile(file, new_loc+"failed/"+nc+".fasta")
+    copyfile(file, new_loc+"failed/"+NA_bin+".fasta")
 
 # =============================================================================
 # OUTPUT CREATED HERE
