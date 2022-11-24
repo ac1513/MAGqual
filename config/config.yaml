@@ -3,30 +3,30 @@
 JOBID: "snake_split_bin_test"
 # Input Files
 #Location of samples tsv
-SAMPLES: "config/samples.tsv"
+#SAMPLES: "config/samples.tsv"
 #location of assembly to cluster
-REFIN: "data/canu10_med.fasta"
+REFIN: "/mnt/lustre/groups/biol-chong-2019/development/MAGqual/canu10_med.fasta"
 #location of timepoint raw reads
-RAW_DIR: "data/"
+#RAW_DIR: "data/"
 #extension of timepoint files
-FILE_EX: "fastq"
+#FILE_EX: "fastq"
 
 #BINNING OPTIONS
 # Method of mapping required
-MAPPING: "LR" # SR, paired_SR or LR
+#MAPPING: "LR" # SR, paired_SR or LR
 # Clustering options
-CONTIG_T: "1000"
-P_THRESH: "0.997"
-COUNT_METHOD: "norm" # norm or raw
+#CONTIG_T: "1000"
+#P_THRESH: "0.997"
+#COUNT_METHOD: "norm" # norm or raw
 
 #ANALYSIS
 #OPTIONS
-blastdb: "/mnt/lustre/groups/biol-chong-2019/databases/blast/nt/nt"
+#blastdb: "/mnt/lustre/groups/biol-chong-2019/databases/blast/nt/nt"
 checkm_db_root: "/mnt/lustre/groups/biol-chong-2019/databases/checkm_data"
-krakendb: "/mnt/lustre/groups/biol-chong-2019/databases/krakendb/kraken2_samstudio8/"
-GTDB: "Y" # Y/N if the kraken DB is based on GTDB taxonomy, adds NCBI comparison to output
-BIN_LOC: "results/clusters/"
+#krakendb: "/mnt/lustre/groups/biol-chong-2019/databases/krakendb/kraken2_samstudio8/"
+#GTDB: "Y" # Y/N if the kraken DB is based on GTDB taxonomy, adds NCBI comparison to output
+BIN_LOC: "/mnt/lustre/groups/biol-chong-2019/development/MAGqual/clusters/"
 # Output plot properties
-kraken_level: "F" # Taxonomic level used in output plots (F, G, S etc.)
-date_scale: "n" # Plot timepoints in plot using date scale (if provided)
-plot_order: "tot_len" # Statistics to order the output plot by, options = 'no_seq','tot_len','av_cov','sd_cov', 'av_gc','sd_gc','n_50','comp', 'contam', 'kraken_id', 'kraken_per', 'gtdb_ncbi'
+#kraken_level: "F" # Taxonomic level used in output plots (F, G, S etc.)
+#date_scale: "n" # Plot timepoints in plot using date scale (if provided)
+#plot_order: "tot_len" # Statistics to order the output plot by, options = 'no_seq','tot_len','av_cov','sd_cov', 'av_gc','sd_gc','n_50','comp', 'contam', 'kraken_id', 'kraken_per', 'gtdb_ncbi'
