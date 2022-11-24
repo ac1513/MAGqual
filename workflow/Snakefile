@@ -21,7 +21,7 @@ if BIN_LOC.endswith("/") == False :
 
 rule all:
     input:
-        expand("analysis/prokka/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", JOBID = JOBID, CLUSTERS = CLUSTERS, ext=[ "err", "fna", "faa", "gff", "gbk", "ffn", "sqn", "fsa", "tbl", "log", "txt", "tsv"]),
+        expand("analysis/bakta/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", JOBID = JOBID, CLUSTERS = CLUSTERS, ext=[ "err", "fna", "faa", "gff", "gbk", "ffn", "sqn", "fsa", "tbl", "log", "txt", "tsv"]),
         expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID),
         expand("analysis/genome_bins/{JOBID}_qual_MAGs.txt", JOBID = JOBID)
 
@@ -29,27 +29,27 @@ rule bakta:
     input:
         clusters = expand("{BIN_LOC}{{CLUSTERS}}.fasta", BIN_LOC=BIN_LOC)
     output:
-        file = expand("analysis/prokka/{{JOBID}}/{{CLUSTERS}}/{{CLUSTERS}}.{ext}", ext=[ "err", "fna", "faa", "gff", "gbk", "ffn", "sqn", "fsa", "tbl", "log", "txt", "tsv"])
+        file = expand("analysis/bakta/{{JOBID}}/{{CLUSTERS}}/{{CLUSTERS}}.{ext}", ext=[ "err", "fna", "faa", "gff", "gbk", "ffn", "sqn", "fsa", "tbl", "log", "txt", "tsv"])
     params:
-        dir = "analysis/prokka/{JOBID}/{CLUSTERS}/",
+        dir = "analysis/bakta/{JOBID}/{CLUSTERS}/",
         prefix = "{CLUSTERS}"
     conda:
         "envs/bakta_env.yaml"
     resources:
-      threads=cluster["prokka"]["threads"],
+      threads=cluster["bakta"]["threads"],
       mem=cluster["__default__"]["mem"],
       time=cluster["__default__"]["time"]
     shell:
         """
-        #awk '/^>/{{print substr($1,1,21); next}}{{print}}' < {input.clusters} > {params.prokka}
+        #awk '/^>/{{print substr($1,1,21); next}}{{print}}' < {input.clusters} > {params.bakta}
         bakta {input.clusters} --outdir {params.dir} --prefix {params.prefix} --cpus {resources.threads}
-        #rm {params.prokka}
+        #rm {params.bakta}
         """
 
 rule checkm:
   input:
       expand("{BIN_LOC}{CLUSTERS}.fasta", BIN_LOC = BIN_LOC, CLUSTERS = CLUSTERS),
-      wait_for = expand("analysis/prokka/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", JOBID = JOBID, CLUSTERS = CLUSTERS, ext=["err", "fna", "faa", "gff", "gbk", "ffn", "sqn", "fsa", "tbl", "log", "txt", "tsv"])
+      wait_for = expand("analysis/bakta/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", JOBID = JOBID, CLUSTERS = CLUSTERS, ext=["err", "fna", "faa", "gff", "gbk", "ffn", "sqn", "fsa", "tbl", "log", "txt", "tsv"])
   output:
       log = expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID),
   params:
@@ -72,12 +72,12 @@ rule checkm:
 
 rule high_mags:
     input:
-        prokka = expand("analysis/prokka/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", ext=[ "err", "fna", "faa", "gff", "gbk", "ffn", "sqn", "fsa", "tbl", "log", "txt", "tsv"], CLUSTERS = CLUSTERS, JOBID = JOBID),
+        bakta = expand("analysis/bakta/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", ext=[ "err", "fna", "faa", "gff", "gbk", "ffn", "sqn", "fsa", "tbl", "log", "txt", "tsv"], CLUSTERS = CLUSTERS, JOBID = JOBID),
         checkm = expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID)
     output:
         txt = "analysis/genome_bins/{JOBID}_qual_MAGs.txt"
     params:
-        prokka = expand("analysis/prokka/{JOBID}/", JOBID = JOBID),
+        bakta = expand("analysis/bakta/{JOBID}/", JOBID = JOBID),
         bin_loc = BIN_LOC,
         jobid = JOBID,
         out_loc = "analysis/genome_bins/"
@@ -89,5 +89,5 @@ rule high_mags:
         time=cluster["__default__"]["time"]
     shell:
         """
-        python workflow/scripts/python/qual_parse.py {params.out_loc} {input.checkm} {params.prokka} {params.bin_loc} {params.jobid} > {output.txt}
+        python workflow/scripts/python/qual_parse.py {params.out_loc} {input.checkm} {params.bakta} {params.bin_loc} {params.jobid} > {output.txt}
         """
