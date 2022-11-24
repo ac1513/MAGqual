@@ -32,7 +32,7 @@ rule bakta:
         file = expand("analysis/bakta/{{JOBID}}/{{CLUSTERS}}/{{CLUSTERS}}.{ext}", ext=[ "faa", "txt", "tsv"])
     params:
         dir = "analysis/bakta/{JOBID}/{CLUSTERS}/",
-        prefix = "{CLUSTERS}"
+        prefix = "{CLUSTERS}",
         database = "$db/bakta/db_2022_10_03/"
     conda:
         "envs/bakta_env.yaml"
@@ -42,7 +42,7 @@ rule bakta:
       time=cluster["__default__"]["time"]
     shell:
         """
-        bakta --db={params.database} --output {params.dir} --prefix {params.prefix} --threads {resources.threads} {input.clusters} 
+        bakta --db={params.database} --output {params.dir} --prefix {params.prefix} --threads {resources.threads} {input.clusters}
         """
 
 # rule checkm:
