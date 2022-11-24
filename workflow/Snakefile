@@ -19,7 +19,7 @@ if BIN_LOC.endswith("/") == False :
 
 
 (CLUSTERS,) = glob_wildcards(BIN_LOC + "{CLUSTERS}.fasta")
-print("here are the" + CLUSTERS)
+print("here are the" + str(CLUSTERS))
 rule all:
     input:
         expand("analysis/bakta/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", JOBID = JOBID, CLUSTERS = CLUSTERS, ext=[ "err", "fna", "faa", "gff", "gbk", "ffn", "sqn", "fsa", "tbl", "log", "txt", "tsv"]),
