@@ -46,48 +46,48 @@ rule bakta:
         #rm {params.bakta}
         """
 
-rule checkm:
-  input:
-      expand("{BIN_LOC}{CLUSTERS}.fasta", BIN_LOC = BIN_LOC, CLUSTERS = CLUSTERS),
-      wait_for = expand("analysis/bakta/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", JOBID = JOBID, CLUSTERS = CLUSTERS, ext=["err", "fna", "faa", "gff", "gbk", "ffn", "sqn", "fsa", "tbl", "log", "txt", "tsv"])
-  output:
-      log = expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID),
-  params:
-      out = expand("analysis/checkm/{JOBID}", JOBID=JOBID),
-      input = BIN_LOC,
-      refin = REFIN,
-      checkmdb = checkmdb
-  conda:
-      "envs/checkm.yaml"
-  resources:
-    threads=cluster["checkm"]["threads"],
-    time =cluster["checkm"]["time"],
-    mem=cluster["__default__"]["mem"],
-  shell:
-      """
-      checkm_db={params.checkmdb}
-      echo ${{checkm_db}} | checkm data setRoot ${{checkm_db}}
-      checkm lineage_wf -f {output.log} --tab_table -x fasta -t {resources.threads} {params.input} {params.out}
-      """
-
-rule high_mags:
-    input:
-        bakta = expand("analysis/bakta/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", ext=[ "err", "fna", "faa", "gff", "gbk", "ffn", "sqn", "fsa", "tbl", "log", "txt", "tsv"], CLUSTERS = CLUSTERS, JOBID = JOBID),
-        checkm = expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID)
-    output:
-        txt = "analysis/genome_bins/{JOBID}_qual_MAGs.txt"
-    params:
-        bakta = expand("analysis/bakta/{JOBID}/", JOBID = JOBID),
-        bin_loc = BIN_LOC,
-        jobid = JOBID,
-        out_loc = "analysis/genome_bins/"
-    conda :
-        "envs/py3.yaml"
-    resources:
-        mem=cluster["__default__"]["mem"],
-        threads=cluster["__default__"]["threads"],
-        time=cluster["__default__"]["time"]
-    shell:
-        """
-        python workflow/scripts/python/qual_parse.py {params.out_loc} {input.checkm} {params.bakta} {params.bin_loc} {params.jobid} > {output.txt}
-        """
+# rule checkm:
+#   input:
+#       expand("{BIN_LOC}{CLUSTERS}.fasta", BIN_LOC = BIN_LOC, CLUSTERS = CLUSTERS),
+#       wait_for = expand("analysis/bakta/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", JOBID = JOBID, CLUSTERS = CLUSTERS, ext=["err", "fna", "faa", "gff", "gbk", "ffn", "sqn", "fsa", "tbl", "log", "txt", "tsv"])
+#   output:
+#       log = expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID),
+#   params:
+#       out = expand("analysis/checkm/{JOBID}", JOBID=JOBID),
+#       input = BIN_LOC,
+#       refin = REFIN,
+#       checkmdb = checkmdb
+#   conda:
+#       "envs/checkm.yaml"
+#   resources:
+#     threads=cluster["checkm"]["threads"],
+#     time =cluster["checkm"]["time"],
+#     mem=cluster["__default__"]["mem"],
+#   shell:
+#       """
+#       checkm_db={params.checkmdb}
+#       echo ${{checkm_db}} | checkm data setRoot ${{checkm_db}}
+#       checkm lineage_wf -f {output.log} --tab_table -x fasta -t {resources.threads} {params.input} {params.out}
+#       """
+#
+# rule high_mags:
+#     input:
+#         bakta = expand("analysis/bakta/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", ext=[ "err", "fna", "faa", "gff", "gbk", "ffn", "sqn", "fsa", "tbl", "log", "txt", "tsv"], CLUSTERS = CLUSTERS, JOBID = JOBID),
+#         checkm = expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID)
+#     output:
+#         txt = "analysis/genome_bins/{JOBID}_qual_MAGs.txt"
+#     params:
+#         bakta = expand("analysis/bakta/{JOBID}/", JOBID = JOBID),
+#         bin_loc = BIN_LOC,
+#         jobid = JOBID,
+#         out_loc = "analysis/genome_bins/"
+#     conda :
+#         "envs/py3.yaml"
+#     resources:
+#         mem=cluster["__default__"]["mem"],
+#         threads=cluster["__default__"]["threads"],
+#         time=cluster["__default__"]["time"]
+#     shell:
+#         """
+#         python workflow/scripts/python/qual_parse.py {params.out_loc} {input.checkm} {params.bakta} {params.bin_loc} {params.jobid} > {output.txt}
+#         """
