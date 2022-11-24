@@ -47,7 +47,8 @@ rule bakta:
 
 rule checkm:
   input:
-      expand("{BIN_LOC}{CLUSTERS}.fasta", BIN_LOC = BIN_LOC, CLUSTERS = CLUSTERS)
+      expand("{BIN_LOC}{CLUSTERS}.fasta", BIN_LOC = BIN_LOC, CLUSTERS = CLUSTERS),
+      wait_for = expand("analysis/bakta/{{JOBID}}/{{CLUSTERS}}/{{CLUSTERS}}.{ext}", ext=[ "faa", "txt", "tsv"])
   output:
       log = expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID),
   params:
