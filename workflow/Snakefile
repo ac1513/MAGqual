@@ -25,26 +25,25 @@ rule all:
         expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID),
         expand("analysis/genome_bins/{JOBID}_qual_MAGs.txt", JOBID = JOBID)
 
-rule prokka:
+rule bakta:
     input:
         clusters = expand("{BIN_LOC}{{CLUSTERS}}.fasta", BIN_LOC=BIN_LOC)
     output:
         file = expand("analysis/prokka/{{JOBID}}/{{CLUSTERS}}/{{CLUSTERS}}.{ext}", ext=[ "err", "fna", "faa", "gff", "gbk", "ffn", "sqn", "fsa", "tbl", "log", "txt", "tsv"])
     params:
         dir = "analysis/prokka/{JOBID}/{CLUSTERS}/",
-        prefix = "{CLUSTERS}",
-        prokka = "results/clusters/{CLUSTERS}_short.fasta"
+        prefix = "{CLUSTERS}"
     conda:
-        "envs/prokka.yaml"
+        "envs/bakta_env.yaml"
     resources:
       threads=cluster["prokka"]["threads"],
       mem=cluster["__default__"]["mem"],
       time=cluster["__default__"]["time"]
     shell:
         """
-        awk '/^>/{{print substr($1,1,21); next}}{{print}}' < {input.clusters} > {params.prokka}
-        prokka {params.prokka} --outdir {params.dir} --prefix {params.prefix} --cpus {resources.threads} --force
-        rm {params.prokka}
+        #awk '/^>/{{print substr($1,1,21); next}}{{print}}' < {input.clusters} > {params.prokka}
+        bakta {input.clusters} --outdir {params.dir} --prefix {params.prefix} --cpus {resources.threads}
+        #rm {params.prokka}
         """
 
 rule checkm:
