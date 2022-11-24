@@ -23,7 +23,7 @@ rule all:
     input:
         expand("analysis/bakta/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", JOBID = JOBID, CLUSTERS = CLUSTERS, ext=[ "faa", "txt", "tsv"]),
         expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID),
-        #expand("analysis/genome_bins/{JOBID}_qual_MAGs.txt", JOBID = JOBID)
+        expand("analysis/genome_bins/{JOBID}_qual_MAGs.txt", JOBID = JOBID)
 
 rule bakta:
     input:
