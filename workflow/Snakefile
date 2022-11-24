@@ -17,9 +17,8 @@ if os.path.exists(cluster_json):
 if BIN_LOC.endswith("/") == False :
     BIN_LOC = BIN_LOC + "/"
 
-
 (CLUSTERS,) = glob_wildcards(BIN_LOC + "{CLUSTERS}.fasta")
-print("here are the" + str(CLUSTERS))
+
 rule all:
     input:
         expand("analysis/bakta/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", JOBID = JOBID, CLUSTERS = CLUSTERS, ext=[ "err", "fna", "faa", "gff", "gbk", "ffn", "sqn", "fsa", "tbl", "log", "txt", "tsv"]),
@@ -42,9 +41,7 @@ rule bakta:
       time=cluster["__default__"]["time"]
     shell:
         """
-        #awk '/^>/{{print substr($1,1,21); next}}{{print}}' < {input.clusters} > {params.bakta}
         bakta {input.clusters} --outdir {params.dir} --prefix {params.prefix} --cpus {resources.threads}
-        #rm {params.bakta}
         """
 
 # rule checkm:
