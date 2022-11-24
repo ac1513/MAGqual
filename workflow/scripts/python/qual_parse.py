@@ -34,28 +34,28 @@ def gen_qual(comp, cont):
         genome = "n"
     return genome
 
-def len_psearch(prok_loc, cluster):
-    loc = str(prok_loc + str(cluster) + '/*.log')
+def len_psearch(bakta_loc, cluster):
+    loc = str(bakta_loc + str(cluster) + '/*.txt')
     for name in glob.glob(loc):
         prok_file = name
         with open(prok_file, 'r') as prok_log:
             for line in prok_log:
-                if "contigs totalling" in line:
-                    length = line.split(" ")[-2]
-    length = float(length)
+                if "Length:" in line:
+                    length = line.split(":")[1]
+    length = int(length)
     return length
 
 parser = argparse.ArgumentParser(description='')
 parser.add_argument('output', help='output directory for the organised bins', type=str)
 parser.add_argument('checkm_log', help='checkm output log file (TAB SEPARATED', type=str)
-parser.add_argument('prok_loc', help='directory containing all prokka output for all clusters', type=str)
+parser.add_argument('bakta_loc', help='directory containing all prokka output for all clusters', type=str)
 parser.add_argument('bin_loc', help='directory containing fasta files for all clusters', type=str)
 parser.add_argument('jobid', help='prefix for current jobs', type=str)
 
 args = parser.parse_args()
 output = args.output
 checkm_log = args.checkm_log
-prok_loc = args.prok_loc
+bakta_loc = args.bakta_loc
 bin_loc = args.bin_loc
 job_id = args.jobid
 
@@ -65,8 +65,8 @@ job_id = args.jobid
 
 checkm_df = pd.read_csv(checkm_log, sep = "\t")
 checkm_df['qual'] = checkm_df.apply(lambda x: qual_cluster(x['Completeness'], x['Contamination']), axis=1)
-checkm_df['keep'] = checkm_df.apply(lambda x: gen_qual(x['Completeness'], x['Contamination']), axis=1)
-checkm_df["length"] = checkm_df.apply(lambda x: len_psearch(prok_loc, x["Bin Id"]), axis = 1)
+#checkm_df['keep'] = checkm_df.apply(lambda x: gen_qual(x['Completeness'], x['Contamination']), axis=1)
+checkm_df["length"] = checkm_df.apply(lambda x: len_psearch(bakta_loc, x["Bin Id"]), axis = 1)
 checkm_df = checkm_df.set_index("Bin Id")
 
 high_clusters = checkm_df[checkm_df['qual'].str.contains("high")].index.values.tolist()
@@ -80,7 +80,7 @@ NA = checkm_df[checkm_df['qual'].str.contains("NA")].index.values.tolist()
 high_qual_clusters= []
 near_comp_clusters = []
 for cluster in high_clusters:
-    loc = str(prok_loc + cluster + '/*.tsv')
+    loc = str(bakta_loc + cluster + '/*.tsv')
     for name in glob.glob(loc):
         prok_file = name
         with open(prok_file, 'r') as prokka_in:
