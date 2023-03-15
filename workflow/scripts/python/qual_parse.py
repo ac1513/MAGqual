@@ -199,10 +199,12 @@ ax = sns.scatterplot(data = checkm_df, x="Completeness", y="Purity",
                 hue='Quality', size = 'Size_bp', sizes=(20, 800), alpha = 0.6, palette=colour_dict, hue_order= labels_list)
 sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 1))
 
-plt.xlabel('Completeness (%)')
-plt.ylabel('Purity (%)')
+plt.xlabel('Completeness (%)', size =24)
+plt.ylabel('Purity (%)', size =24)
 plt.xlim(0)
+plt.legend(prop={'size': 20})
 plt.tight_layout()
+plt.tick_params(labelsize=18)
 
 plt.savefig(job_id + '_mag_qual.png')
 # =============================================================================
