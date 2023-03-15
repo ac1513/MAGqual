@@ -249,7 +249,7 @@ magqual_df["Completeness_Software"] = comp_software
 
 magqual_df = magqual_df.reindex(columns=["Quality", "Completeness", "Contamination", "Completeness_Software","Completeness_Approach", "16S_Recovered", "16S_Software", "tRNA_Extracted", "tRNA_Software", "Size_bp", "No_contigs", "N50_length"])
 
-magqual_df.to_csv(job_id + "_mag_qual_statistics.csv", sep = "\t")
+magqual_df.to_csv(job_id + "_mag_qual_statistics.csv")
 
 print("-" * 12)
 print(" NUMBER MAGs")
