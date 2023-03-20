@@ -73,8 +73,8 @@ job_id = args.jobid
 comp_software = "CheckM v.1.0.13"
 comp_approach = "Marker gene"
 
-colour_dict = dict({'High Quality':'#9CEC5B',
-                  'Near Complete':'#50C5B7',
+colour_dict = dict({'High Quality':'#50C5B7',
+                  'Near Complete':'#9CEC5B',
                   'Medium Quality': '#F0F465',
                   'Low Quality': "#F8333C",
                   'Failed': '#646E78'})
