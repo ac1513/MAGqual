@@ -60,6 +60,7 @@ parser = argparse.ArgumentParser(description='')
 parser.add_argument('output', help='output directory for the organised bins', type=str)
 parser.add_argument('checkm_log', help='checkm output log file (TAB SEPARATED', type=str)
 parser.add_argument('bakta_loc', help='directory containing all bakta output for all clusters', type=str)
+parser.add_argument('seqkit_log', help='file containing the seqkit output for all clusters', type=str)
 parser.add_argument('bin_loc', help='directory containing fasta files for all clusters', type=str)
 parser.add_argument('jobid', help='prefix for current jobs', type=str)
 
@@ -67,6 +68,7 @@ args = parser.parse_args()
 output = args.output
 checkm_log = args.checkm_log
 bakta_loc = args.bakta_loc
+seqkit_log = args.seqkit_log
 bin_loc = args.bin_loc
 job_id = args.jobid
 
@@ -80,7 +82,7 @@ colour_dict = dict({'High Quality':'#50C5B7',
                   'Failed': '#646E78'})
 
 # =============================================================================
-# CHECKM STUFF HERE
+# CHECKM PARSE
 # =============================================================================
 checkm_df = pd.read_csv(checkm_log, sep = "\t")
 checkm_df['Quality'] = checkm_df.apply(lambda x: qual_cluster(x['Completeness'], x['Contamination']), axis=1)
@@ -95,8 +97,19 @@ NA = checkm_df[checkm_df['Quality'].str.contains("Failed")].index.values.tolist(
 all_clusters = high_clusters + med_qual_clusters + low_qual_clusters + NA
 
 checkm_df = checkm_df.drop(checkm_df.columns[[1, 2, 3, 4, 5, 6, 7, 8, 9]], axis=1)
+
 # =============================================================================
-# bakta PARSE HERE
+# SEQKIT PARSE
+# =============================================================================
+seqkit_df = pd.read_csv(seqkit_log, sep = "\t")
+seqkit_df = seqkit_df[["file", "max_len"]]
+seqkit_df["file"] = seqkit_df["file"].str.replace('.fasta','', regex=True)
+seqkit_df.set_index("file", inplace=True)
+seqkit_df.rename(columns={"max_len":"max_contig_length"}, inplace = True)
+checkm_df = pd.merge(checkm_df, seqkit_df, left_index=True, right_index=True, how="left")
+
+# =============================================================================
+# BAKTA PARSE
 # =============================================================================
 
 high_qual_clusters= []
