@@ -105,7 +105,7 @@ seqkit_df = pd.read_csv(seqkit_log, sep = "\t")
 seqkit_df = seqkit_df[["file", "max_len"]]
 seqkit_df["file"] = seqkit_df["file"].str.replace('.fasta','', regex=True)
 seqkit_df.set_index("file", inplace=True)
-seqkit_df.rename(columns={"max_len":"max_contig_length"}, inplace = True)
+seqkit_df.rename(columns={"max_len":"Max_contig_length"}, inplace = True)
 checkm_df = pd.merge(checkm_df, seqkit_df, left_index=True, right_index=True, how="left")
 
 # =============================================================================
@@ -257,13 +257,13 @@ for NA_bin in NA:
 # OUTPUT CREATED HERE
 # =============================================================================
 
-magqual_df = checkm_df[["Quality", "Completeness", "Contamination", "16S_Recovered", "16S_Software", "Size_bp", "No_contigs", "N50_length"]].copy()
+magqual_df = checkm_df[["Quality", "Completeness", "Contamination", "16S_Recovered", "16S_Software", "Size_bp", "No_contigs", "N50_length", "Max_contig_length"]].copy()
 magqual_df["tRNA_Extracted"] = pd.Series(trna_num)
 magqual_df["tRNA_Software"] = magqual_df["16S_Software"]
 magqual_df["Completeness_Approach"] = comp_approach
 magqual_df["Completeness_Software"] = comp_software
 
-magqual_df = magqual_df.reindex(columns=["Quality", "Completeness", "Contamination", "Completeness_Software","Completeness_Approach", "16S_Recovered", "16S_Software", "tRNA_Extracted", "tRNA_Software", "Size_bp", "No_contigs", "N50_length"])
+magqual_df = magqual_df.reindex(columns=["Quality", "Completeness", "Contamination", "Completeness_Software","Completeness_Approach", "16S_Recovered", "16S_Software", "tRNA_Extracted", "tRNA_Software", "Size_bp", "No_contigs", "N50_length", "Max_contig_length"])
 
 magqual_df.to_csv(job_id + "_mag_qual_statistics.csv")
 
