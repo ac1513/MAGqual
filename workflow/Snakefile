@@ -88,7 +88,8 @@ rule high_mags:
         seqkit = expand("analysis/{JOBID}_seqkit_stats.tsv", JOBID=JOBID),
         checkm = expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID)
     output:
-        txt = "analysis/genome_bins/{JOBID}_qual_MAGs.txt"
+        txt = "analysis/genome_bins/{JOBID}_qual_MAGs.txt",
+        stats = "analysis/{JOBID}_mag_qual_statistics.csv"
     params:
         bakta = expand("analysis/bakta/{JOBID}/", JOBID = JOBID),
         bin_loc = BIN_LOC,
