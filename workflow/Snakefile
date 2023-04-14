@@ -36,7 +36,7 @@ rule bakta_db:
     shell:
         """
         if [ ! -z {params.database} ] && [ -d {params.database} ]; then 
-            ln -s {params.database} databases/bakta/
+            ln -s {params.database} databases/bakta
         else
             wget https://zenodo.org/record/7669534/files/db-light.tar.gz
             tar -xzf db-light.tar.gz -C databases/bakta/ --strip-components 1
@@ -76,7 +76,7 @@ rule checkm_db:
     shell:
         """
         if [ ! -z {params.database} ] && [ -d {params.database} ]; then 
-            ln -s {params.database} databases/checkm/
+            ln -s {params.database} databases/checkm
         else
             wget https://zenodo.org/record/7401545/files/checkm_data_2015_01_16.tar.gz
             tar -xzf checkm_data_2015_01_16.tar.gz -C databases/checkm/
