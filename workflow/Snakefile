@@ -66,17 +66,35 @@ rule bakta:
         bakta --db={params.database} --output {params.dir} --prefix {params.prefix} --threads {resources.threads} {input.clusters}
         """
 
+
+rule checkm_db: 
+    output: "databases/checkm/selected_marker_sets.tsv"
+    conda:
+        "envs/checkm.yaml"
+    params: 
+        database = checkmdb
+    shell:
+        """
+        if [ ! -z {params.database} ] && [ -d {params.database} ]; then 
+            ln -s {params.database} databases/checkm/
+        else
+            wget https://zenodo.org/record/7401545/files/checkm_data_2015_01_16.tar.gz
+            tar -xzf checkm_data_2015_01_16.tar.gz -C databases/checkm/
+            rm checkm_data_2015_01_16.tar.gz
+        fi
+        """
+
 rule checkm:
   input:
       expand("{BIN_LOC}{CLUSTERS}.fasta", BIN_LOC = BIN_LOC, CLUSTERS = CLUSTERS),
-      wait_for = expand("analysis/bakta/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", JOBID = JOBID, CLUSTERS = CLUSTERS, ext=["faa", "txt", "tsv"])
+      wait_for = expand("analysis/bakta/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", JOBID = JOBID, CLUSTERS = CLUSTERS, ext=["faa", "txt", "tsv"]),
+      database = "databases/checkm/selected_marker_sets.tsv"
   output:
       log = expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID),
   params:
       out = expand("analysis/checkm/{JOBID}", JOBID=JOBID),
       input = BIN_LOC,
       refin = REFIN,
-      checkmdb = checkmdb
   conda:
       "envs/checkm.yaml"
   resources:
@@ -85,7 +103,7 @@ rule checkm:
     mem=cluster["__default__"]["mem"],
   shell:
       """
-      checkm_db={params.checkmdb}
+      checkm_db={output.database}
       echo ${{checkm_db}} | checkm data setRoot ${{checkm_db}}
       checkm lineage_wf -f {output.log} --tab_table -x fasta -t {resources.threads} {params.input} {params.out}
       """
