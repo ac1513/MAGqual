@@ -48,7 +48,7 @@ rule bakta_db:
 rule bakta:
     input:
         clusters = expand("{BIN_LOC}{{CLUSTERS}}.fasta", BIN_LOC=BIN_LOC),
-        database = "databases/bakta/{database}/version.json"
+        database = expand("databases/bakta/{{database}}/version.json")
     output:
         file = expand("analysis/bakta/{{JOBID}}/{{CLUSTERS}}/{{CLUSTERS}}.{ext}", ext=[ "faa", "txt", "tsv"])
     params:
