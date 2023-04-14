@@ -28,7 +28,7 @@ rule all:
         expand("analysis/{JOBID}_mag_qual_statistics.csv", JOBID = JOBID)
 
 rule bakta_db: 
-    output: "databases/bakta/db*/version.json"
+    output: "databases/bakta/{database}/version.json"
     conda:
         "envs/bakta_env.yaml"
     params: 
