@@ -68,7 +68,7 @@ rule bakta:
 
 
 rule checkm_db: 
-    output: "databases/checkm/selected_marker_sets.tsv"
+    output: "databases/checkm/2015_01_16/selected_marker_sets.tsv"
     conda:
         "envs/checkm.yaml"
     params: 
@@ -76,10 +76,10 @@ rule checkm_db:
     shell:
         """
         if [ ! -z {params.database} ] && [ -d {params.database} ]; then 
-            ln -s {params.database} databases/checkm
+            ln -s {params.database} databases/checkm/2015_01_16
         else
             wget https://zenodo.org/record/7401545/files/checkm_data_2015_01_16.tar.gz
-            tar -xzf checkm_data_2015_01_16.tar.gz -C databases/checkm/
+            tar -xzf checkm_data_2015_01_16.tar.gz -C databases/checkm/2015_01_16/
             rm checkm_data_2015_01_16.tar.gz
         fi
         """
