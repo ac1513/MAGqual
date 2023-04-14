@@ -36,7 +36,7 @@ rule bakta_db:
     shell:
         """
         if [ ! -z {params.database} ] && [ -d {params.database} ]; then 
-            ln -s {params.database} databases/bakta
+            ln -sTf {params.database} databases/bakta
         else
             wget https://zenodo.org/record/7669534/files/db-light.tar.gz
             tar -xzf db-light.tar.gz -C databases/bakta/ --strip-components 1
@@ -68,7 +68,7 @@ rule bakta:
 
 
 rule checkm_db: 
-    output: "databases/checkm/2015_01_16/selected_marker_sets.tsv"
+    output: "databases/checkm/selected_marker_sets.tsv"
     conda:
         "envs/checkm.yaml"
     params: 
@@ -76,10 +76,10 @@ rule checkm_db:
     shell:
         """
         if [ ! -z {params.database} ] && [ -d {params.database} ]; then 
-            ln -s {params.database} databases/checkm/2015_01_16
+            ln -sTf {params.database} databases/checkm
         else
             wget https://zenodo.org/record/7401545/files/checkm_data_2015_01_16.tar.gz
-            tar -xzf checkm_data_2015_01_16.tar.gz -C databases/checkm/2015_01_16/
+            tar -xzf checkm_data_2015_01_16.tar.gz -C databases/checkm/
             rm checkm_data_2015_01_16.tar.gz
         fi
         """
@@ -88,7 +88,7 @@ rule checkm:
   input:
       expand("{BIN_LOC}{CLUSTERS}.fasta", BIN_LOC = BIN_LOC, CLUSTERS = CLUSTERS),
       wait_for = expand("analysis/bakta/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", JOBID = JOBID, CLUSTERS = CLUSTERS, ext=["faa", "txt", "tsv"]),
-      database = "databases/checkm/2015_01_16/selected_marker_sets.tsv"
+      database = "databases/checkm/selected_marker_sets.tsv"
   output:
       log = expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID),
   params:
