@@ -35,7 +35,7 @@ rule bakta_db:
         database = baktadb
     shell:
         """
-        if [ -d {params.database}]; then 
+        if [ -z {params.database}]; then 
             ln -s {params.database} databases/bakta/db/
         else
             wget https://zenodo.org/record/7669534/files/db-light.tar.gz
