@@ -4,7 +4,8 @@ cluster_json = "config/cluster.json"
 JOBID = config["JOBID"]
 REFIN = config["REFIN"]
 BIN_LOC = config["BIN_LOC"]
-checkmdb = config["checkm_db_root"]
+checkmdb = config["checkm_db"]
+baktadb = config["bakta_db"]
 
 import json
 import os,sys
@@ -26,15 +27,31 @@ rule all:
         expand("analysis/genome_bins/{JOBID}_qual_MAGs.txt", JOBID = JOBID),
         expand("analysis/{JOBID}_mag_qual_statistics.csv", JOBID = JOBID)
 
+rule bakta_db: 
+    output: "databases/bakta/{bakta_version}/version.json"
+    conda:
+        "envs/bakta_env.yaml"
+    params: 
+        database = baktadb
+    shell:
+        """
+        if [ ! -d {params.database}]; then 
+            bakta_db download --output databases/bakta/
+        else
+            ln -s {params.basktadb} databases/bakta/
+        fi
+        """
+
 rule bakta:
     input:
-        clusters = expand("{BIN_LOC}{{CLUSTERS}}.fasta", BIN_LOC=BIN_LOC)
+        clusters = expand("{BIN_LOC}{{CLUSTERS}}.fasta", BIN_LOC=BIN_LOC),
+        database = expand("databases/bakta/{bakta_version}/version.json", bakta_version = bakta_version)
     output:
         file = expand("analysis/bakta/{{JOBID}}/{{CLUSTERS}}/{{CLUSTERS}}.{ext}", ext=[ "faa", "txt", "tsv"])
     params:
         dir = "analysis/bakta/{JOBID}/{CLUSTERS}/",
         prefix = "{CLUSTERS}",
-        database = "$db/bakta/db_2022_10_03/"
+        database = "databases/bakta/"
     conda:
         "envs/bakta_env.yaml"
     resources:
