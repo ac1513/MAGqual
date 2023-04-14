@@ -103,7 +103,7 @@ rule checkm:
     mem=cluster["__default__"]["mem"],
   shell:
       """
-      checkm_db={output.database}
+      checkm_db={input.database}
       echo ${{checkm_db}} | checkm data setRoot ${{checkm_db}}
       checkm lineage_wf -f {output.log} --tab_table -x fasta -t {resources.threads} {params.input} {params.out}
       """
