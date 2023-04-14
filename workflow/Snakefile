@@ -28,7 +28,7 @@ rule all:
         expand("analysis/{JOBID}_mag_qual_statistics.csv", JOBID = JOBID)
 
 rule bakta_db: 
-    output: "databases/bakta/{database}/version.json"
+    output: "databases/bakta/version.json"
     conda:
         "envs/bakta_env.yaml"
     params: 
@@ -36,19 +36,19 @@ rule bakta_db:
     shell:
         """
         if [ ! -z {params.database} ] && [ -d {params.database} ]; then 
-            ln -s {params.database} databases/bakta/db/
+            ln -s {params.database} databases/bakta/
         else
             wget https://zenodo.org/record/7669534/files/db-light.tar.gz
-            tar -xzf db-light.tar.gz -C databases/bakta/
+            tar -xzf db-light.tar.gz -C databases/bakta/ --strip-components 1
             rm db-light.tar.gz
-            amrfinder_update --force_update --database databases/bakta/db-light/amrfinderplus-db/
+            amrfinder_update --force_update --database databases/bakta/amrfinderplus-db/
         fi
         """
 
 rule bakta:
     input:
         clusters = expand("{BIN_LOC}{{CLUSTERS}}.fasta", BIN_LOC=BIN_LOC),
-        database = expand("databases/bakta/{{database}}/version.json")
+        database = expand("databases/bakta/version.json")
     output:
         file = expand("analysis/bakta/{{JOBID}}/{{CLUSTERS}}/{{CLUSTERS}}.{ext}", ext=[ "faa", "txt", "tsv"])
     params:
