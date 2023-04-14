@@ -41,7 +41,7 @@ rule bakta_db:
             rm db-light.tar.gz
             amrfinder_update --force_update --database databases/bakta/db-light/amrfinderplus-db/
         else
-            ln -s {params.basktadb} databases/bakta/db/
+            ln -s {params.database} databases/bakta/db/
         fi
         """
 
