@@ -36,6 +36,9 @@ rule bakta_db:
     shell:
         """
         if [ ! -z {params.database} ] && [ -d {params.database} ]; then 
+            cd databases/
+            rm -r bakta/
+            cd ..
             ln -sTf {params.database} databases/bakta
         else
             wget https://zenodo.org/record/7669534/files/db-light.tar.gz
@@ -76,6 +79,9 @@ rule checkm_db:
     shell:
         """
         if [ ! -z {params.database} ] && [ -d {params.database} ]; then 
+            cd databases
+            rm -r checkm/
+            cd ..
             ln -sTf {params.database} databases/checkm
         else
             wget https://zenodo.org/record/7401545/files/checkm_data_2015_01_16.tar.gz
@@ -95,15 +101,16 @@ rule checkm:
       out = expand("analysis/checkm/{JOBID}", JOBID=JOBID),
       input = BIN_LOC,
       refin = REFIN,
+      database = "databases/checkm/"
   conda:
       "envs/checkm.yaml"
   resources:
     threads=cluster["checkm"]["threads"],
     time =cluster["checkm"]["time"],
-    mem=cluster["__default__"]["mem"],
+    mem=cluster["__default__"]["mem"]
   shell:
       """
-      checkm_db={input.database}
+      checkm_db={params.database}
       echo ${{checkm_db}} | checkm data setRoot ${{checkm_db}}
       checkm lineage_wf -f {output.log} --tab_table -x fasta -t {resources.threads} {params.input} {params.out}
       """
