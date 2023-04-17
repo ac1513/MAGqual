@@ -42,6 +42,7 @@ rule bakta_db:
             ln -sTf {params.database} databases/bakta
         else
             wget https://zenodo.org/record/7669534/files/db-light.tar.gz
+            mkdir -p databases/bakta/
             tar -xzf db-light.tar.gz -C databases/bakta/ --strip-components 1
             rm db-light.tar.gz
             amrfinder_update --force_update --database databases/bakta/amrfinderplus-db/
@@ -85,6 +86,7 @@ rule checkm_db:
             ln -sTf {params.database} databases/checkm
         else
             wget https://zenodo.org/record/7401545/files/checkm_data_2015_01_16.tar.gz
+            mkdir -p databases/checkm/
             tar -xzf checkm_data_2015_01_16.tar.gz -C databases/checkm/
             rm checkm_data_2015_01_16.tar.gz
         fi
