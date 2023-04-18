@@ -1,4 +1,6 @@
+#!/usr/bin/env python
 import sys 
+import os
 import argparse
 from datetime import date
 
@@ -39,4 +41,4 @@ if args.cluster == "slurm":
 else:
     command = "snakemake --use-conda -j " + str(jobs) + " --config JOBID=" + prefix + " ASM_LOC=" + assembly + " BIN_LOC=" + bindir + checkm_com + bakta_com
 
-print(command)
+os.system(command)
