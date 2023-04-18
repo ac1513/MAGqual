@@ -2,7 +2,7 @@ import sys
 import argparse
 from datetime import date
 
-def_prefix = "MAGqual_" + str(date.today().replace("-",""))
+def_prefix = "MAGqual_" + str(date.today()).replace("-","")
 
 parser = argparse.ArgumentParser(description='usage = python MAGqual.py ')
 parser.add_argument('-p', '--prefix', dest='prefix', help = 'prefix for the MAGqual run', type = int, default=def_prefix)
