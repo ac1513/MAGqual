@@ -18,18 +18,44 @@ This will create a copy of the MAGqual repository on your computer.
 ### Step 2: Install dependencies
 
 * Conda (package manager)
-* Snakemake v. 6.17 or higher
+* Snakemake v.6.17.1 or higher (workflow manager)
 
-In order to run MAGqual, Conda and Snakemake (>v6.13) are required. 
-Miniconda can be installed following the instructions in the [Anaconda documentation](https://docs.conda.io/en/latest/miniconda.html) and Snakemake can be installed following the instructions in the [Snakemake documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html). 
+In order to run MAGqual, Conda and Snakemake are required.
 
+Miniconda can be installed following the instructions for your system in the [Miniconda documentation](https://docs.conda.io/en/latest/miniconda.html). 
+
+Once Miniconda is installed, Snakemake can be installed following the instructions in the [Snakemake documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html). 
+
+MAGqual will handle the other dependancies while the pipeline is running through the use of Conda environments.
 
 ## Running MAGqual 
 
 ### Quick start quide 
-Once the dependencies are installed you can run MAGqual using the following command:
 
-```python MAGqual.py```
+Once you have created an environment with Snakemake in you can run MAGqual with the following command:
+
+```python MAGqual.py --asm assembly.fa --bins bins_dir/```
+
+Where `--asm` corresponds to the location of the assembly used to generate the metagenome bins and `--bins` is the location of the directory containing the metagenomic bins to be run through MAGqual (in fasta format).
+
+### Additional Options
+
+usage: MAGqual.py [-h] -a ASSEMBLY -b BINDIR [-p PREFIX] [-j JOBS] [--cluster CLUSTER] [--checkmdb CHECKMDB] [--baktadb BAKTADB]
+
+Required: python MAGqual.py -a/--asm assembly.fa -b/--bins bins_dir/ 
+options:
+  -h, --help            show this help message and exit
+  -a ASSEMBLY, --asm ASSEMBLY
+                        location of the assembly used to generate the bins (Required)
+  -b BINDIR, --bins BINDIR
+                        location of the directory containing the bins to run through MAGqual (required)
+  -p PREFIX, --prefix PREFIX
+                        prefix for the MAGqual run, default = MAGqual_YYYYMMDD
+  -j JOBS, --jobs JOBS  number of jobs to be run concurrently, default = 1
+  --cluster CLUSTER     OPTIONAL: type of cluster (available options: slurm), leave empty if running MAGqual directly
+  --checkmdb CHECKMDB   OPTIONAL: location of a ready installed database for CheckM
+  --baktadb BAKTADB     OPTIONAL: location of a ready installed database for Bakta, note must be v5.0 or above
+
 
 ### Optional: CheckM and Bakta databases
 MAGqual will handle the installation of both CheckM and Bakta, however if you have previously used either of these tools it is possible to speed up the process and save file space by specifying the location of pre-downloaded databases. 
@@ -40,6 +66,10 @@ If you already have the CheckM database downloaded you can specify the location 
 #### Bakta database 
 If no Bakta database is provided MAGqual will automatically download the lightweight Bakta database (as the full database is large and can take a long time to download). NOTE: MAGqual uses Bakta v1.7.0 which requires a database version of > 5.0.
 However, for more accurate MAG annotation we recommend downloading the full database (from [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7669534.svg)](https://doi.org/10.5281/zenodo.7669534) following the instructions in the [Bakta documentation](https://bakta.readthedocs.io/en/latest/BAKTA.html#database-download)) and specifying the location for MAGqual using the parameter `bakta_db`. This database can then be use for each subsequent MAGqual run. 
+
+### For those familiar with Snakemake
+
+It is possible (and encouraged) to further tweak MAGqual parameters if you are familiar with Snakemake. 
 
 ### Additional Notes:
 MAGqual is compatible with Python 3.10.1 or higher.
