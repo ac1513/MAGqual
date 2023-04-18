@@ -31,8 +31,8 @@ else:
     baktadb = ""
 
 if args.cluster == "slurm":
-    command = "snakemake --use-conda -j " + str(jobs) + "--config JOBID = " + prefix + "ASM_LOC = " + assembly + "BIN_LOC = " + binloc + "checkm_db = " + checkmdb + "bakta_db = " + baktadb + '--cluster-config config/cluster.json --cluster "sbatch -A {cluster.account} -p {cluster.partition} -t {cluster.time} -c {cluster.threads} --mem-per-cpu {cluster.mem}"'
+    command = "snakemake --use-conda -j " + str(jobs) + " --config JOBID = " + prefix + " ASM_LOC = " + assembly + " BIN_LOC = " + binloc + " checkm_db = " + checkmdb + " bakta_db = " + baktadb + ' --cluster-config config/cluster.json --cluster "sbatch -A {cluster.account} -p {cluster.partition} -t {cluster.time} -c {cluster.threads} --mem-per-cpu {cluster.mem}"'
 else:
-    command = "snakemake --use-conda -j " + str(jobs) + "--config JOBID = " + prefix + "ASM_LOC = " + assembly + "BIN_LOC = " + binloc + "checkm_db = " + checkmdb + "bakta_db = " + baktadb
+    command = "snakemake --use-conda -j " + str(jobs) + " --config JOBID = " + prefix + " ASM_LOC = " + assembly + " BIN_LOC = " + binloc + " checkm_db = " + checkmdb + " bakta_db = " + baktadb
 
 print(command)
