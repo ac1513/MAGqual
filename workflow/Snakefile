@@ -2,7 +2,7 @@ configfile: "config/config.yaml"
 cluster_json = "config/cluster.json"
 
 JOBID = config["JOBID"]
-REFIN = config["REFIN"]
+ASM_LOC = config["ASM_LOC"]
 BIN_LOC = config["BIN_LOC"]
 checkmdb = config["checkm_db"]
 baktadb = config["bakta_db"]
@@ -102,7 +102,7 @@ rule checkm:
   params:
       out = expand("analysis/checkm/{JOBID}", JOBID=JOBID),
       input = BIN_LOC,
-      refin = REFIN,
+      refin = ASM_LOC,
       database = "databases/checkm/"
   conda:
       "envs/checkm.yaml"
