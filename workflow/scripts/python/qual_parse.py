@@ -18,13 +18,13 @@ import matplotlib.pyplot as plt
 
 def qual_cluster(comp, cont):
     if (comp >90) and (cont<5):
-        qual = "high"
+        qual = "High Quality"
     elif (comp >= 50) and (cont <10):
-        qual = "med"
+        qual = "Medium Quality"
     elif (comp <50) and (cont <10):
-        qual = "low"
+        qual = "Low Quality"
     else:
-        qual = "NA"
+        qual = "Failed"
     return qual
 
 def gen_qual(comp, cont):
@@ -34,59 +34,98 @@ def gen_qual(comp, cont):
         genome = "n"
     return genome
 
-def len_psearch(prok_loc, cluster):
-    loc = str(prok_loc + str(cluster) + '/*.log')
+def bsearch(bakta_loc, cluster): 
+    length = 0
+    loc = str(bakta_loc + str(cluster) + '/' + str(cluster) + '.txt') #don't copy this bit change it !
+    # loc = str(str(cluster) + '.txt') #don't copy this bit change it !
     for name in glob.glob(loc):
-        prok_file = name
-        with open(prok_file, 'r') as prok_log:
-            for line in prok_log:
-                if "contigs totalling" in line:
-                    length = line.split(" ")[-2]
-    length = float(length)
-    return length
+        bakta_file = name
+        with open(bakta_file, 'r') as bakta_log:
+            for line in bakta_log:
+                if "Length:" in line:
+                    length = int(line.split(":")[1])
+                if "Count:" in line: 
+                    count = int(line.split(":")[1])
+                if "N50:" in line:
+                    N50 = int(line.split(":")[1])
+                if "Software:" in line: 
+                    software = line.split(":")[1].strip()
+                if "Database" in line:
+                    db = line.split(":")[1].strip()
+    bakta_v = "Bakta " + software + " DB " + db 
+    row_dict = {"length" : length, "contigs" : count, "N50": N50, "bakta_v" : bakta_v}
+    return pd.Series(row_dict)
 
 parser = argparse.ArgumentParser(description='')
 parser.add_argument('output', help='output directory for the organised bins', type=str)
 parser.add_argument('checkm_log', help='checkm output log file (TAB SEPARATED', type=str)
-parser.add_argument('prok_loc', help='directory containing all prokka output for all clusters', type=str)
+parser.add_argument('bakta_loc', help='directory containing all bakta output for all clusters', type=str)
+parser.add_argument('seqkit_log', help='file containing the seqkit output for all clusters', type=str)
 parser.add_argument('bin_loc', help='directory containing fasta files for all clusters', type=str)
 parser.add_argument('jobid', help='prefix for current jobs', type=str)
 
 args = parser.parse_args()
 output = args.output
 checkm_log = args.checkm_log
-prok_loc = args.prok_loc
+bakta_loc = args.bakta_loc
+seqkit_log = args.seqkit_log
 bin_loc = args.bin_loc
 job_id = args.jobid
 
-# =============================================================================
-# CHECKM STUFF HERE
-# =============================================================================
+comp_software = "CheckM v.1.0.13"
+comp_approach = "Marker gene"
 
+colour_dict = dict({'High Quality':'#50C5B7',
+                  'Near Complete':'#9CEC5B',
+                  'Medium Quality': '#F0F465',
+                  'Low Quality': "#F8333C",
+                  'Failed': '#646E78'})
+
+# =============================================================================
+# CHECKM PARSE
+# =============================================================================
 checkm_df = pd.read_csv(checkm_log, sep = "\t")
-checkm_df['qual'] = checkm_df.apply(lambda x: qual_cluster(x['Completeness'], x['Contamination']), axis=1)
-checkm_df['keep'] = checkm_df.apply(lambda x: gen_qual(x['Completeness'], x['Contamination']), axis=1)
-checkm_df["length"] = checkm_df.apply(lambda x: len_psearch(prok_loc, x["Bin Id"]), axis = 1)
+checkm_df['Quality'] = checkm_df.apply(lambda x: qual_cluster(x['Completeness'], x['Contamination']), axis=1)
+checkm_df[['Size_bp', 'No_contigs', 'N50_length', '16S_Software']] = checkm_df.apply(lambda x: bsearch(bakta_loc, x["Bin Id"]), axis = 1)
+
 checkm_df = checkm_df.set_index("Bin Id")
 
-high_clusters = checkm_df[checkm_df['qual'].str.contains("high")].index.values.tolist()
-med_qual_clusters = checkm_df[checkm_df['qual'].str.contains("med")].index.values.tolist()
-low_qual_clusters = checkm_df[checkm_df['qual'].str.contains("low")].index.values.tolist()
-NA = checkm_df[checkm_df['qual'].str.contains("NA")].index.values.tolist()
+high_clusters = checkm_df[checkm_df['Quality'].str.contains("High Quality")].index.values.tolist()
+med_qual_clusters = checkm_df[checkm_df['Quality'].str.contains("Medium Quality")].index.values.tolist()
+low_qual_clusters = checkm_df[checkm_df['Quality'].str.contains("Low Quality")].index.values.tolist()
+NA = checkm_df[checkm_df['Quality'].str.contains("Failed")].index.values.tolist()
+all_clusters = high_clusters + med_qual_clusters + low_qual_clusters + NA
+
+checkm_df = checkm_df.drop(checkm_df.columns[[1, 2, 3, 4, 5, 6, 7, 8, 9]], axis=1)
+
 # =============================================================================
-# PROKKA PARSE HERE
+# SEQKIT PARSE
+# =============================================================================
+seqkit_df = pd.read_csv(seqkit_log, sep = "\t")
+seqkit_df = seqkit_df[["file", "max_len"]]
+seqkit_df["file"] = seqkit_df["file"].str.replace('.fasta','', regex=True)
+seqkit_df.set_index("file", inplace=True)
+seqkit_df.rename(columns={"max_len":"Max_contig_length"}, inplace = True)
+checkm_df = pd.merge(checkm_df, seqkit_df, left_index=True, right_index=True, how="left")
+
+# =============================================================================
+# BAKTA PARSE
 # =============================================================================
 
 high_qual_clusters= []
 near_comp_clusters = []
-for cluster in high_clusters:
-    loc = str(prok_loc + cluster + '/*.tsv')
+r16s_comp_clusters = []
+trna_num = {}
+for cluster in all_clusters:
+    loc = str(bakta_loc + cluster + '/' + cluster + '.tsv') #change this too 
+    # loc = str(str(cluster) + '.tsv') #don't copy this bit change it !
     for name in glob.glob(loc):
-        prok_file = name
-        with open(prok_file, 'r') as prokka_in:
+        bakta_file = name
+        with open(bakta_file, 'r') as bakta_in:
             trna_set = set()
             rna_set = set()
-            for line in prokka_in:
+            rrna_16S = "N"
+            for line in bakta_in:
                 if "tRNA-Ala" in line:
                     trna_set.add("tRNA-Ala")
                 if "tRNA-Arg" in line:
@@ -131,19 +170,56 @@ for cluster in high_clusters:
                     rna_set.add('5S')
                 if ("16S ribosomal RNA" in line) and ("partial" not in line):
                     rna_set.add('16S')
+                    rrna_16S = "Y"
                 if ("23S ribosomal RNA" in line) and ("partial" not in line):
                     rna_set.add('23s')
-    if (len(trna_set) >= 18) and (len(rna_set) == 3):
-        high_qual_clusters.append(cluster)
-    else:
-        near_comp_clusters.append(cluster) # adds high qual that fail trna/rna
+        if rrna_16S == "Y":
+            r16s_comp_clusters.append(cluster)
+        if cluster in high_clusters:
+            if (len(trna_set) >= 18) and (len(rna_set) == 3):
+                high_qual_clusters.append(cluster)
+            else:
+                near_comp_clusters.append(cluster) # adds high qual that fail trna/rna
+        trna_num.update({cluster : len(trna_set)})
+
+            
+# =============================================================================
+# Add these new qualities to the checkm dataframe        
+# =============================================================================
+
+checkm_df.loc[checkm_df.index.isin(near_comp_clusters), "Quality"] = "Near Complete"
+
+checkm_df.loc[checkm_df.index.isin(r16s_comp_clusters), "16S_Recovered"] = "Y"
+checkm_df["16S_Recovered"] = checkm_df["16S_Recovered"].fillna("N")
+
+# Sort out legend order
+label_order = ["High Quality", "Near Complete", "Medium Quality", "Low Quality", "Failed"]
+labels_all = checkm_df["Quality"].unique().tolist()
+
+for item in label_order:
+    if item not in labels_all:
+        label_order.remove(item)
+
+labels_list = label_order
+
 # =============================================================================
 # Basic plot
 # =============================================================================
 
+checkm_df["Purity"] = 100 - checkm_df["Contamination"]
 plt.figure(figsize=(15, 10))
-ax = sns.scatterplot(data = checkm_df, x="Completeness", y="Contamination",
-                hue="qual", size = "length", sizes=(20, 800), alpha = 0.5)
+ax = sns.scatterplot(data = checkm_df, x="Completeness", y="Purity",
+                hue='Quality', size = 'Size_bp', sizes=(20, 800), alpha = 0.6, 
+                palette=colour_dict, hue_order= labels_list)
+sns.move_legend(ax, "upper left", bbox_to_anchor=(1, 1))
+
+plt.xlabel('Completeness (%)', size = 24)
+plt.ylabel('Purity (%)', size = 24)
+plt.xlim(0)
+plt.legend(prop={'size': 20})
+plt.tight_layout()
+plt.tick_params(labelsize=18)
+
 plt.savefig(job_id + '_mag_qual.png')
 # =============================================================================
 # COPYING FILES INTO QUAL DIRECTORIES
@@ -181,19 +257,29 @@ for NA_bin in NA:
 # OUTPUT CREATED HERE
 # =============================================================================
 
+magqual_df = checkm_df[["Quality", "Completeness", "Contamination", "16S_Recovered", "16S_Software", "Size_bp", "No_contigs", "N50_length", "Max_contig_length"]].copy()
+magqual_df["tRNA_Extracted"] = pd.Series(trna_num)
+magqual_df["tRNA_Software"] = magqual_df["16S_Software"]
+magqual_df["Completeness_Approach"] = comp_approach
+magqual_df["Completeness_Software"] = comp_software
+
+magqual_df = magqual_df.reindex(columns=["Quality", "Completeness", "Contamination", "Completeness_Software","Completeness_Approach", "16S_Recovered", "16S_Software", "tRNA_Extracted", "tRNA_Software", "Size_bp", "No_contigs", "N50_length", "Max_contig_length"])
+
+magqual_df.to_csv("analysis/" + job_id + "_mag_qual_statistics.csv")
+
 print("-" * 12)
 print(" NUMBER MAGs")
 print("-" * 12)
-print("High Qual:", len(high_qual_clusters))
-print("Near Comp:", len(near_comp_clusters))
-print("Med Qual:", len(med_qual_clusters))
-print("Low Qual:", len(low_qual_clusters))
+print("High Quality:", len(high_qual_clusters))
+print("Near Complete:", len(near_comp_clusters))
+print("Med Quality:", len(med_qual_clusters))
+print("Low Quality:", len(low_qual_clusters))
 print("Failed:", len(NA), "\n")
 print("-" * 12)
 print(" MAG IDs")
 print("-" * 12)
-print("High Qual: " , ", ".join([str(x) for x in high_qual_clusters]))
-print("Near Comp: ", ", ".join([str(x) for x in near_comp_clusters]))
-print("Med Qual: ", ", ".join([str(x) for x in med_qual_clusters]))
-print("Low Qual: ", ", ".join([str(x) for x in low_qual_clusters]))
+print("High Quality: " , ", ".join([str(x) for x in high_qual_clusters]))
+print("Near Complete: ", ", ".join([str(x) for x in near_comp_clusters]))
+print("Med Quality: ", ", ".join([str(x) for x in med_qual_clusters]))
+print("Low Quality: ", ", ".join([str(x) for x in low_qual_clusters]))
 print("Failed: ", ", ".join([str(x) for x in NA]))
