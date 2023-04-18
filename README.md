@@ -9,8 +9,10 @@ Here is a step-by-step guide on how to install MAGqual from the GitHub repositor
 
 Open a command-line interface (CLI) or terminal on your computer or computer cluster. Change to the directory where you want to install MAGqual. Then, run the following command to clone the MAGqual repository from GitHub:
 
-bash
-```git clone https://github.com/ac1513/MAGqual.git```
+
+```
+git clone https://github.com/ac1513/MAGqual.git
+```
 This will create a copy of the MAGqual repository on your computer.
 
 ### Step 2: Install dependencies
