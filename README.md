@@ -3,7 +3,7 @@
 ## 
 
 ## MAGqual Set-up
-### MAGqual 
+### MAGqual  
 
 `git clone https://github.com/ac1513/MAGqual`
 
