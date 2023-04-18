@@ -25,16 +25,16 @@ if args.checkmdb:
     checkmdb = args.checkmdb
     checkm_com = " checkm_db=" + str(checkmdb)
 else:
-    checkmdb = ""
+    checkm_com = ""
 if args.baktadb:
     baktadb = args.baktadb
     bakta_com = " bakta_db=" + baktadb
 else:
-    baktadb = ""
+    bakta_com = ""
 
 if args.cluster == "slurm":
     command = "snakemake --use-conda -j " + str(jobs) + " --config JOBID=" + prefix + " ASM_LOC=" + assembly + " BIN_LOC=" + binloc + checkm_com + bakta_com + ' --cluster-config config/cluster.json --cluster "sbatch -A {cluster.account} -p {cluster.partition} -t {cluster.time} -c {cluster.threads} --mem-per-cpu {cluster.mem}"'
 else:
     command = "snakemake --use-conda -j " + str(jobs) + " --config JOBID=" + prefix + " ASM_LOC=" + assembly + " BIN_LOC=" + binloc + checkm_com + bakta_com
-    
+
 print(command)
