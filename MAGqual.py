@@ -5,7 +5,7 @@ from datetime import date
 def_prefix = "MAGqual_" + str(date.today()).replace("-","")
 
 parser = argparse.ArgumentParser(description='usage = python MAGqual.py ')
-parser.add_argument('-p', '--prefix', dest='prefix', help = 'prefix for the MAGqual run', type = int, default=def_prefix)
+parser.add_argument('-p', '--prefix', dest='prefix', help = 'prefix for the MAGqual run', type = str, default=def_prefix)
 parser.add_argument('-j', '--jobs', dest='jobs', help = 'number of jobs to be run concurrently', type = int, default=1)
 parser.add_argument('-a', '--assembly', dest='assembly', help = 'location of the assembly used to generate the bins', type = str)
 parser.add_argument('-b', '--binloc', dest='binloc', help = 'location of the directory containing the bins to run through MAGqual', type = str)
