@@ -39,10 +39,11 @@ Once you have created an environment with Snakemake in you can run MAGqual with 
 Where `--asm` corresponds to the location of the assembly used to generate the metagenome bins and `--bins` is the location of the directory containing the metagenomic bins to be run through MAGqual (in fasta format).
 
 ### Additional Options
-
+```
 usage: MAGqual.py [-h] -a ASSEMBLY -b BINDIR [-p PREFIX] [-j JOBS] [--cluster CLUSTER] [--checkmdb CHECKMDB] [--baktadb BAKTADB]
 
 Required: python MAGqual.py -a/--asm assembly.fa -b/--bins bins_dir/ 
+
 options:
   -h, --help            show this help message and exit
   -a ASSEMBLY, --asm ASSEMBLY
@@ -55,7 +56,7 @@ options:
   --cluster CLUSTER     OPTIONAL: type of cluster (available options: slurm), leave empty if running MAGqual directly
   --checkmdb CHECKMDB   OPTIONAL: location of a ready installed database for CheckM
   --baktadb BAKTADB     OPTIONAL: location of a ready installed database for Bakta, note must be v5.0 or above
-
+```
 
 ### Optional: CheckM and Bakta databases
 MAGqual will handle the installation of both CheckM and Bakta, however if you have previously used either of these tools it is possible to speed up the process and save file space by specifying the location of pre-downloaded databases. 
