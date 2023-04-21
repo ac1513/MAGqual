@@ -1,20 +1,79 @@
 # MAGqual
+MAGqual is a command line tool that will evaluate the quality of metagenomic bins and generate required metadata in line with the MIMAG standards (as outlined in [Bowers et al. 2017](https://www.nature.com/articles/nbt.3893)). 
 
-## 
+## MAGqual Set-Up
 
-## MAGqual Set-up
-### MAGqual  
+Here is a step-by-step guide on how to install MAGqual from the GitHub repository at https://github.com/ac1513/MAGqual.
 
-`git clone https://github.com/ac1513/MAGqual`
+### Step 1: Clone the MAGqual repository
+
+Open a command-line interface (CLI) or terminal on your computer or computer cluster. Change to the directory where you want to install MAGqual. Then, run the following command to clone the MAGqual repository from GitHub:
 
 
-### Dependency installation
-In order to run MAGqual, Conda and Snakemake (>v6.13) are required. 
-Miniconda can be installed following the instructions in the [Anaconda documentation](https://docs.conda.io/en/latest/miniconda.html) and Snakemake can be installed following the instructions in the [Snakemake documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html). 
+```
+git clone https://github.com/ac1513/MAGqual.git
+```
+This will create a copy of the MAGqual repository on your computer.
 
-### CheckM database
+### Step 2: Install dependencies
+
+* Conda (package manager)
+* Snakemake v.6.17.1 or higher (workflow manager)
+
+In order to run MAGqual, Conda and Snakemake are required.
+
+Miniconda can be installed following the instructions for your system in the [Miniconda documentation](https://docs.conda.io/en/latest/miniconda.html). 
+
+Once Miniconda is installed, Snakemake can be installed following the instructions in the [Snakemake documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html). 
+
+MAGqual will handle the other dependancies while the pipeline is running through the use of Conda environments.
+
+## Running MAGqual 
+
+### Quick start quide 
+
+Once you have created an environment with Snakemake in you can run MAGqual with the following command:
+
+```python MAGqual.py --asm assembly.fa --bins bins_dir/```
+
+Where `--asm` corresponds to the location of the assembly used to generate the metagenome bins and `--bins` is the location of the directory containing the metagenomic bins to be run through MAGqual (in fasta format).
+
+### Additional Options
+```
+usage: MAGqual.py [-h] -a ASSEMBLY -b BINDIR [-p PREFIX] [-j JOBS] [--cluster CLUSTER] [--checkmdb CHECKMDB] [--baktadb BAKTADB]
+
+Required: python MAGqual.py -a/--asm assembly.fa -b/--bins bins_dir/ 
+
+options:
+  -h, --help            show this help message and exit
+  -a ASSEMBLY, --asm ASSEMBLY
+                        location of the assembly used to generate the bins (Required)
+  -b BINDIR, --bins BINDIR
+                        location of the directory containing the bins to run through MAGqual (required)
+  -p PREFIX, --prefix PREFIX
+                        prefix for the MAGqual run, default = MAGqual_YYYYMMDD
+  -j JOBS, --jobs JOBS  number of jobs to be run concurrently, default = 1
+  --cluster CLUSTER     OPTIONAL: type of cluster (available options: slurm), leave empty if running MAGqual directly
+  --checkmdb CHECKMDB   OPTIONAL: location of a ready installed database for CheckM
+  --baktadb BAKTADB     OPTIONAL: location of a ready installed database for Bakta, note must be v5.0 or above
+```
+
+### Optional: CheckM and Bakta databases
+MAGqual will handle the installation of both CheckM and Bakta, however if you have previously used either of these tools it is possible to speed up the process and save file space by specifying the location of pre-downloaded databases. 
+
+#### CheckM database
 If you already have the CheckM database downloaded you can specify the location using the parameter `checkm_db` to skip the download, otherwise MAGqual will download the required databases for CheckM for you (this will be the most recent version which is dated 2015-01-16).
 
-### Bakta database 
+#### Bakta database 
 If no Bakta database is provided MAGqual will automatically download the lightweight Bakta database (as the full database is large and can take a long time to download). NOTE: MAGqual uses Bakta v1.7.0 which requires a database version of > 5.0.
 However, for more accurate MAG annotation we recommend downloading the full database (from [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7669534.svg)](https://doi.org/10.5281/zenodo.7669534) following the instructions in the [Bakta documentation](https://bakta.readthedocs.io/en/latest/BAKTA.html#database-download)) and specifying the location for MAGqual using the parameter `bakta_db`. This database can then be use for each subsequent MAGqual run. 
+
+### For those familiar with Snakemake
+
+It is possible (and encouraged) to further tweak MAGqual parameters if you are familiar with Snakemake. 
+
+### Additional Notes:
+MAGqual is compatible with Python 3.10.1 or higher.
+Make sure to clone the MAGqual repository regularly to get the latest updates and bug fixes.
+Refer to the MAGqual documentation in the GitHub repository for more information on how to use the tool and interpret the results.
+Congratulations! You have successfully installed MAGqual on your system. 
