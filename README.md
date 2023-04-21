@@ -53,7 +53,8 @@ options:
   -p PREFIX, --prefix PREFIX
                         prefix for the MAGqual run, default = MAGqual_YYYYMMDD
   -j JOBS, --jobs JOBS  number of jobs to be run concurrently, default = 1
-  --cluster CLUSTER     OPTIONAL: type of cluster (available options: slurm), leave empty if running MAGqual directly
+  --cluster CLUSTER     OPTIONAL: The type of cluster to run MAGqual on a HPC system (available options: slurm), 
+                        don’t use if running MAGqual locally.
   --checkmdb CHECKMDB   OPTIONAL: location of a ready installed database for CheckM
   --baktadb BAKTADB     OPTIONAL: location of a ready installed database for Bakta, note must be v5.0 or above
 ```
