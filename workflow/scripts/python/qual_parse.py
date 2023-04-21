@@ -104,6 +104,7 @@ checkm_df = checkm_df.drop(checkm_df.columns[[1, 2, 3, 4, 5, 6, 7, 8, 9]], axis=
 seqkit_df = pd.read_csv(seqkit_log, sep = "\t")
 seqkit_df = seqkit_df[["file", "max_len"]]
 seqkit_df["file"] = seqkit_df["file"].str.replace('.fasta','', regex=True)
+seqkit_df["file"] = seqkit_df["file"].str.split("/").str[-1]
 seqkit_df.set_index("file", inplace=True)
 seqkit_df.rename(columns={"max_len":"Max_contig_length"}, inplace = True)
 checkm_df = pd.merge(checkm_df, seqkit_df, left_index=True, right_index=True, how="left")
