@@ -9,7 +9,6 @@ Here is a step-by-step guide on how to install MAGqual from the GitHub repositor
 
 Open a command-line interface (CLI) or terminal on your computer or computer cluster. Change to the directory where you want to install MAGqual. Then, run the following command to clone the MAGqual repository from GitHub:
 
-
 ```
 git clone https://github.com/ac1513/MAGqual.git
 ```
@@ -36,9 +35,10 @@ Once you have created an environment with Snakemake in you can run MAGqual with 
 
 ```python MAGqual.py --asm assembly.fa --bins bins_dir/```
 
-Where `--asm` corresponds to the location of the assembly used to generate the metagenome bins and `--bins` is the location of the directory containing the metagenomic bins to be run through MAGqual (in fasta format).
+* `--asm` corresponds to the location of the assembly used to generate the metagenome bins 
+* `--bins` is the location of the directory containing the metagenomic bins to be run through MAGqual (in fasta format)
 
-### Additional Options
+#### Full Help documentation:
 ```
 usage: MAGqual.py [-h] -a ASSEMBLY -b BINDIR [-p PREFIX] [-j JOBS] [--cluster CLUSTER] [--checkmdb CHECKMDB] [--baktadb BAKTADB]
 
@@ -52,22 +52,32 @@ options:
                         location of the directory containing the bins to run through MAGqual (required)
   -p PREFIX, --prefix PREFIX
                         prefix for the MAGqual run, default = MAGqual_YYYYMMDD
-  -j JOBS, --jobs JOBS  number of jobs to be run concurrently, default = 1
+  -j JOBS, --jobs JOBS  The number of cores to be used or if running on a HPC the number of jobs
+                        to be run concurrently, default = 1
   --cluster CLUSTER     OPTIONAL: The type of cluster to run MAGqual on a HPC system (available options: slurm), 
                         don’t use if running MAGqual locally.
   --checkmdb CHECKMDB   OPTIONAL: location of a ready installed database for CheckM
   --baktadb BAKTADB     OPTIONAL: location of a ready installed database for Bakta, note must be v5.0 or above
 ```
+### Additional Options
 
-### Optional: CheckM and Bakta databases
+* `-p / --prefix`: Specify a prefix for the output files (Default: MAGqual_YYYYMMDD)
+* `-j / --jobs`: If running locally this is the number of cores to be used, if using the --cluster option and running on a HPC queue this corresponds to the number of jobs to be run concurrently, (Default:1)
+
+### Optional
+
+#### CheckM and Bakta databases
 MAGqual will handle the installation of both CheckM and Bakta, however if you have previously used either of these tools it is possible to speed up the process and save file space by specifying the location of pre-downloaded databases. 
 
-#### CheckM database
-If you already have the CheckM database downloaded you can specify the location using the parameter `checkm_db` to skip the download, otherwise MAGqual will download the required databases for CheckM for you (this will be the most recent version which is dated 2015-01-16).
+##### CheckM database
+If you already have the CheckM database downloaded you can specify the location using the parameter `--checkm_db` to skip the download, otherwise MAGqual will download the required databases for CheckM for you (this will be the most recent version which is dated 2015-01-16).
 
-#### Bakta database 
+##### Bakta database 
 If no Bakta database is provided MAGqual will automatically download the lightweight Bakta database (as the full database is large and can take a long time to download). NOTE: MAGqual uses Bakta v1.7.0 which requires a database version of > 5.0.
-However, for more accurate MAG annotation we recommend downloading the full database (from [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7669534.svg)](https://doi.org/10.5281/zenodo.7669534) following the instructions in the [Bakta documentation](https://bakta.readthedocs.io/en/latest/BAKTA.html#database-download)) and specifying the location for MAGqual using the parameter `bakta_db`. This database can then be use for each subsequent MAGqual run. 
+However, for more accurate MAG annotation we recommend downloading the full database (from [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7669534.svg)](https://doi.org/10.5281/zenodo.7669534) following the instructions in the [Bakta documentation](https://bakta.readthedocs.io/en/latest/BAKTA.html#database-download)) and specifying the location for MAGqual using the parameter `--bakta_db`. This database can then be use for each subsequent MAGqual run. 
+
+### Running on a computing cluster
+* `--cluster`: Current option: `slurm`, run MAGqual with options configured to run on a HPC computer cluster with queuing architecture. NOTE: it is possible to run MAGqual on other queuing systems using the Snakemake framework
 
 ### For those familiar with Snakemake
 

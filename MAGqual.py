@@ -12,9 +12,9 @@ parser.add_argument('-a', '--asm', dest='assembly', required = True, help = 'loc
 parser.add_argument('-b', '--bins', dest='bindir', required = True, help = 'location of the directory containing the bins to run through MAGqual', type = str)
 
 parser.add_argument('-p', '--prefix', dest='prefix', help = 'prefix for the MAGqual run, default = MAGqual_YYYYMMDD', type = str, default=def_prefix)
-parser.add_argument('-j', '--jobs', dest='jobs', help = 'number of jobs to be run concurrently, default = 1', type = int, default=1)
+parser.add_argument('-j', '--jobs', dest='jobs', help = 'The number of cores to be used or if running on a HPC the number of jobs to be run concurrently, default = 1', type = int, default=1)
 
-parser.add_argument('--cluster', dest='cluster', help = 'OPTIONAL:The type of cluster to run MAGqual on a HPC system (available options: slurm), don’t use if running MAGqual locally.', type = str)
+parser.add_argument('--cluster', dest='cluster', help = 'OPTIONAL: The type of cluster to run MAGqual on a HPC system (available options: slurm), don’t use if running MAGqual locally.', type = str)
 parser.add_argument('--checkmdb', dest='checkmdb', help = 'OPTIONAL: location of a ready installed database for CheckM', type = str)
 parser.add_argument('--baktadb', dest='baktadb', help = 'OPTIONAL: location of a ready installed database for Bakta, note must be v5.0 or above', type = str)
 
