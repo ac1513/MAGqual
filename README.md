@@ -26,6 +26,11 @@ Miniconda can be installed following the instructions for your system in the [Mi
 Once Miniconda is installed, Snakemake can be installed following the instructions in the [Snakemake documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html). 
 
 MAGqual will handle the other dependancies while the pipeline is running through the use of Conda environments.
+### Additional Notes:
+MAGqual is compatible with Python 3.10.1 or higher.
+Make sure to clone the MAGqual repository regularly to get the latest updates and bug fixes.
+Refer to the MAGqual documentation in the GitHub repository for more information on how to use the tool and interpret the results.
+Congratulations! You have successfully installed MAGqual on your system. 
 
 ## Running MAGqual 
 
@@ -79,15 +84,18 @@ However, for more accurate MAG annotation we recommend downloading the full data
 ### Running on a computing cluster
 MAGqual can be integrated into a HPC queuing system using the following option: 
 * `--cluster`: Current option: `slurm`, run MAGqual with options configured to run on a HPC computer cluster with queuing architecture.  
-Currently the only queuing system available is `slurm`, however it is possible to run MAGqual on different queuing systems through the Snakemake framework - see [Running on different queuing architechture](#running-on-different-queuing-architechture) below.
+Currently the only queuing system available is `slurm`, however if this doesn't work for you it is possible to run MAGqual on different queuing systems through the Snakemake framework - see [Running on different queuing architechture](#running-on-different-queuing-architechture) below.
 
 ## For those familiar with Snakemake
 
 It is possible (and encouraged) to further tweak MAGqual parameters if you are familiar with Snakemake. 
-### Running on different queuing architechture
+The config file: `config/config.yaml` can be edited directly for common parameters. 
+And then the pipeline can be run from the MAGqual directory using the basic Snakemake command:
+`snakemake --use-conda -j 1`
+This command can then be decorated with any of the command line options Snakemake allows - see the [Snakemake documentation](https://snakemake.readthedocs.io/en/stable/executing/cli.html) for options. 
 
-### Additional Notes:
-MAGqual is compatible with Python 3.10.1 or higher.
-Make sure to clone the MAGqual repository regularly to get the latest updates and bug fixes.
-Refer to the MAGqual documentation in the GitHub repository for more information on how to use the tool and interpret the results.
-Congratulations! You have successfully installed MAGqual on your system. 
+### Running on different queuing architechture
+Snakemake provides an easy way to run this pipeline on a computing cluster. We have provided support for a HPC with a Slurm queuing system, however this configuration is unlikely to work for everyone. 
+Rule specific cluster information is held in the `config/cluster.json` - you can see more about the format of this file in the [Snakemake documentation](https://snakemake.readthedocs.io/en/stable/snakefiles/configuration.html#cluster-configuration-deprecated). This file can be edited, as can the command used to submit the pipeline. 
+NOTE: When using the `--cluster slurm` option with MAGqual.py, the following is added to the Snakemake command:
+`--cluster-config config/cluster.json --cluster "sbatch -t {cluster.time} -c {cluster.threads} --mem-per-cpu {cluster.mem}`
