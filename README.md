@@ -88,14 +88,14 @@ Currently the only queuing system available is `slurm`, however if this doesn't 
 
 ## For those familiar with Snakemake
 
-It is possible (and encouraged) to further tweak MAGqual parameters if you are familiar with Snakemake. 
-The config file: `config/config.yaml` can be edited directly for common parameters. 
+It is possible (and encouraged) to further tweak MAGqual parameters if you are familiar with Snakemake.  
+The config file: `config/config.yaml` can be edited directly for common parameters.  
 And then the pipeline can be run from the MAGqual directory using the basic Snakemake command:
-`snakemake --use-conda -j 1`
+```snakemake --use-conda -j 1```  
 This command can then be decorated with any of the command line options Snakemake allows - see the [Snakemake documentation](https://snakemake.readthedocs.io/en/stable/executing/cli.html) for options. 
 
 ### Running on different queuing architechture
 Snakemake provides an easy way to run this pipeline on a computing cluster. We have provided support for a HPC with a Slurm queuing system, however this configuration is unlikely to work for everyone. 
-Rule specific cluster information is held in the `config/cluster.json` - you can see more about the format of this file in the [Snakemake documentation](https://snakemake.readthedocs.io/en/stable/snakefiles/configuration.html#cluster-configuration-deprecated). This file can be edited, as can the command used to submit the pipeline. 
+Rule specific cluster information is held in the `config/cluster.json` - you can see more about the format of this file in the [Snakemake documentation](https://snakemake.readthedocs.io/en/stable/snakefiles/configuration.html#cluster-configuration-deprecated). This file can be edited, as can the command used to submit the pipeline.  
 NOTE: When using the `--cluster slurm` option with MAGqual.py, the following is added to the Snakemake command:
-`--cluster-config config/cluster.json --cluster "sbatch -t {cluster.time} -c {cluster.threads} --mem-per-cpu {cluster.mem}`
+```--cluster-config config/cluster.json --cluster "sbatch -t {cluster.time} -c {cluster.threads} --mem-per-cpu {cluster.mem}```
