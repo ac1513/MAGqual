@@ -1,61 +1,8 @@
 {
     "__default__" :
     {
-        "account" : "BIOL-CHONG-2019",
         "time" : "04:00:00",
         "threads" : 1,
-        "partition" : "nodes",
-        "mem" : "4g"
-    },
-    "bwa_index" :
-    {
-        "time" : "12:00:00",
-        "threads" : 20,
-        "mem" : "2g"
-    },
-    "bwa_mem" :
-    {
-        "time" : "12:00:00",
-        "threads" : 6
-    },
-    "bwa_mem_pair" :
-    {
-        "time" : "2-00:00:00",
-        "threads" : 6
-    },
-    "minimap" :
-    {
-        "time" : "12:00:00",
-        "threads" : 6
-    },
-    "bin_feeder" :
-    {
-        "time" : "12:00:00"
-    },
-    "norm_counts" :
-    {
-        "time" : "01:00:00",
-        "mem" : "8g"
-    },
-    "merge_filecounts" :
-    {
-        "time" : "01:00:00",
-        "mem" : "8g"
-    },
-    "checkm_unbin" :
-    {
-        "time" : "08:00:00",
-        "threads" : 20,
-        "mem" : "2g"
-    },
-    "file_parser" :
-    {
-        "time" : "02:00:00",
-        "mem" : "8g"
-    },
-    "kraken" :
-    {
-        "threads" : 60,
         "mem" : "4g"
     },
     "bakta" :
