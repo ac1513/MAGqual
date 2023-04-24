@@ -78,8 +78,8 @@ However, for more accurate MAG annotation we recommend downloading the full data
 
 ### Running on a computing cluster
 MAGqual can be integrated into a HPC queuing system using the following option: 
-* `--cluster`: Current option: `slurm`, run MAGqual with options configured to run on a HPC computer cluster with queuing architecture.
-Currently the only queuing system available is `slurm`, however it is possible to run MAGqual on different queuing systems through the Snakemake framework - see [Running on different queuing architechture]() below.
+* `--cluster`: Current option: `slurm`, run MAGqual with options configured to run on a HPC computer cluster with queuing architecture.  
+Currently the only queuing system available is `slurm`, however it is possible to run MAGqual on different queuing systems through the Snakemake framework - see [Running on different queuing architechture](#running-on-different-queuing-architechture) below.
 
 ## For those familiar with Snakemake
 
