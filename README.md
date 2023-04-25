@@ -27,7 +27,7 @@ Once Miniconda is installed, Snakemake can be installed following the instructio
 
 MAGqual will handle the other dependancies while the pipeline is running through the use of Conda environments.
 ### Additional Notes:
-MAGqual is compatible with Python 3.10.1 or higher.
+MAGqual is compatible with Python 3.10.1 or higher (as of April 2023).
 Make sure to clone the MAGqual repository regularly to get the latest updates and bug fixes.
 Refer to the MAGqual documentation in the GitHub repository for more information on how to use the tool and interpret the results.
 Congratulations! You have successfully installed MAGqual on your system. 
@@ -54,7 +54,7 @@ options:
   -a ASSEMBLY, --asm ASSEMBLY
                         location of the assembly used to generate the bins (Required)
   -b BINDIR, --bins BINDIR
-                        location of the directory containing the bins to run through MAGqual (required)
+                        path containing the directory containing the bins to run through MAGqual (Required)
   -p PREFIX, --prefix PREFIX
                         prefix for the MAGqual run, default = MAGqual_YYYYMMDD
   -j JOBS, --jobs JOBS  The number of cores to be used or if running on a HPC the number of jobs
@@ -66,8 +66,8 @@ options:
 ```
 ### Additional Options
 
-* `-p / --prefix`: Specify a prefix for the output files (Default: MAGqual_YYYYMMDD)
-* `-j / --jobs`: If running locally this is the number of cores to be used, if using the --cluster option and running on a HPC queue this corresponds to the number of jobs to be run concurrently, (Default:1)
+* `-p / --prefix`: Specify a prefix for the output files (Default = MAGqual_YYYYMMDD)
+* `-j / --jobs`: If running locally this is the number of cores to be used, if using the --cluster option and running on a HPC queue this corresponds to the number of jobs to be run concurrently, (Default = 1)
 
 ### Optional
 
@@ -78,13 +78,13 @@ MAGqual will handle the installation of both CheckM and Bakta, however if you ha
 If you already have the CheckM database downloaded you can specify the location using the parameter `--checkm_db` to skip the download, otherwise MAGqual will download the required databases for CheckM for you (this will be the most recent version which is dated 2015-01-16).
 
 ##### Bakta database 
-If no Bakta database is provided MAGqual will automatically download the lightweight Bakta database (as the full database is large and can take a long time to download). NOTE: MAGqual uses Bakta v1.7.0 which requires a database version of > 5.0.  
+If no Bakta database is provided MAGqual will automatically download the lightweight Bakta database (as the full database is large and can take a long time to download). NOTE: MAGqual uses Bakta v1.7.0 which requires a Bakta database version of > 5.0.  
 However, for more accurate MAG annotation we recommend downloading the full database (from [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7669534.svg)](https://doi.org/10.5281/zenodo.7669534) following the instructions in the [Bakta documentation](https://bakta.readthedocs.io/en/latest/BAKTA.html#database-download)) and specifying the location for MAGqual using the parameter `--bakta_db`. This database can then be use for each subsequent MAGqual run. 
 
 ### Running on a computing cluster
 MAGqual can be integrated into a HPC queuing system using the following option: 
 * `--cluster`: Current option: `slurm`, run MAGqual with options configured to run on a HPC computer cluster with queuing architecture.  
-Currently the only queuing system available is `slurm`, however if this doesn't work for you it is possible to run MAGqual on different queuing systems through the Snakemake framework - see [Running on different queuing architechture](#running-on-different-queuing-architechture) below.
+The only queueing system integrated into MAGQual currently is `slurm`, however if this doesn't work for you it is possible to run MAGqual on different queuing systems through the Snakemake framework - see [Running on different queuing architechture](#running-on-different-queuing-architechture) below.
 
 ## For those familiar with Snakemake
 
