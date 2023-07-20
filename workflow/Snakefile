@@ -77,7 +77,7 @@ rule bakta:
 
 
 rule checkm_db: 
-    output: "databases/checkm/selected_marker_sets.tsv"
+    output: "benchmarks/checkm/{JOBID}_checkmdb.log"
     conda:
         "envs/checkm.yaml"
     params: 
@@ -97,6 +97,7 @@ rule checkm_db:
             tar -xzf checkm_data_2015_01_16.tar.gz -C databases/checkm/
             rm checkm_data_2015_01_16.tar.gz
         fi
+        touch benchmarks/checkm/{JOBID}_checkmdb.log
         """
 
 rule checkm:
