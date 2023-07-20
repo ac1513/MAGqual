@@ -55,7 +55,7 @@ rule bakta_db:
 rule bakta:
     input:
         clusters = expand("{BIN_LOC}{{CLUSTERS}}.fasta", BIN_LOC=BIN_LOC),
-        database = expand("databases/bakta/version.json")
+        database = expand("benchmarks/bakta/{JOBID}_baktadb.log", JOBID = JOBID)
     output:
         file = expand("analysis/bakta/{{JOBID}}/{{CLUSTERS}}/{{CLUSTERS}}.{ext}", ext=[ "faa", "txt", "tsv"])
     params:
@@ -104,7 +104,7 @@ rule checkm:
   input:
       expand("{BIN_LOC}{CLUSTERS}.fasta", BIN_LOC = BIN_LOC, CLUSTERS = CLUSTERS),
       #wait_for = expand("analysis/bakta/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", JOBID = JOBID, CLUSTERS = CLUSTERS, ext=["faa", "txt", "tsv"]),
-      database = "databases/checkm/selected_marker_sets.tsv"
+      database = "benchmarks/checkm/{JOBID}_checkmdb.log"
   output:
       log = expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID),
   params:
