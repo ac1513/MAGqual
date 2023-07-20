@@ -63,7 +63,7 @@ rule bakta:
         prefix = "{CLUSTERS}",
         database = "databases/bakta/"
     benchmark:
-        "benchmarks/bakta/{JOBID}_{CLUSTERS}_bakta.tsv"
+        "benchmarks/bakta/{JOBID}_{{CLUSTERS}}_bakta.tsv"
     conda:
         "envs/bakta_env.yaml"
     resources:
