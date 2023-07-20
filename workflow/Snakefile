@@ -113,7 +113,7 @@ rule checkm:
       refin = ASM_LOC,
       database = "databases/checkm/"
   benchmark:
-      "benchmarks/checkm/{JOBID}_checkm.tsv"
+      "benchmarks/checkm/{JOBID}/{JOBID}_checkm.tsv"
   conda:
       "envs/checkm.yaml"
   resources:
