@@ -6,7 +6,7 @@ ASM_LOC = config["ASM_LOC"]
 BIN_LOC = config["BIN_LOC"]
 checkmdb = config["checkm_db"]
 baktadb = config["bakta_db"]
-
+print(BIN_LOC)
 import json
 import os,sys
 
@@ -15,8 +15,8 @@ if os.path.exists(cluster_json):
     with open(cluster_json) as file:
         cluster = json.load(file)
 
-if str(BIN_LOC).endswith("/") == False :
-    BIN_LOC = BIN_LOC + "/"
+#if str(BIN_LOC).endswith("/") == False :
+#    BIN_LOC = BIN_LOC + "/"
 
 (CLUSTERS,) = glob_wildcards(BIN_LOC + "{CLUSTERS}.fasta")
 
