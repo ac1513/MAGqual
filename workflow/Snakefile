@@ -106,7 +106,7 @@ rule checkm:
       #wait_for = expand("analysis/bakta/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", JOBID = JOBID, CLUSTERS = CLUSTERS, ext=["faa", "txt", "tsv"]),
       database = "benchmarks/checkm/{JOBID}_checkmdb.log"
   output:
-      log = expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID),
+      log = expand("analysis/checkm/{JOBID}_checkm.log", JOBID=JOBID),
   params:
       out = expand("analysis/checkm/{JOBID}", JOBID=JOBID),
       input_loc = BIN_LOC,
