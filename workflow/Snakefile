@@ -82,6 +82,8 @@ rule checkm_db:
         "envs/checkm.yaml"
     params: 
         database = checkmdb
+    benchmark:
+        "benchmarks/checkm/{JOBID}_checkmdb.tsv"
     shell:
         """
         if [ ! -z {params.database} ] && [ -d {params.database} ]; then 
@@ -109,6 +111,8 @@ rule checkm:
       input = BIN_LOC,
       refin = ASM_LOC,
       database = "databases/checkm/"
+benchmark:
+    "benchmarks/checkm/{JOBID}_{CLUSTERS}_checkm.tsv"
   conda:
       "envs/checkm.yaml"
   resources:
@@ -128,6 +132,8 @@ rule seqkit:
         checkm = expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID)
     output:
         tsv = "analysis/{JOBID}_seqkit_stats.tsv"
+    benchmark:
+        "benchmarks/seqkit/{JOBID}_seqkit.tsv"
     conda:
         "envs/seqkit.yaml"
     shell:
@@ -148,6 +154,8 @@ rule high_mags:
         bin_loc = BIN_LOC,
         jobid = JOBID,
         out_loc = "analysis/genome_bins/"
+    benchmark:
+        "benchmarks/scripts/{JOBID}_python.tsv"
     conda :
         "envs/py3.yaml"
     resources:
