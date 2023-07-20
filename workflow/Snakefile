@@ -6,7 +6,7 @@ ASM_LOC = config["ASM_LOC"]
 BIN_LOC = config["BIN_LOC"]
 checkmdb = config["checkm_db"]
 baktadb = config["bakta_db"]
-print(BIN_LOC)
+
 import json
 import os,sys
 
@@ -15,8 +15,8 @@ if os.path.exists(cluster_json):
     with open(cluster_json) as file:
         cluster = json.load(file)
 
-#if str(BIN_LOC).endswith("/") == False :
-#    BIN_LOC = BIN_LOC + "/"
+if BIN_LOC.endswith("/") == False :
+    BIN_LOC = BIN_LOC + "/"
 
 (CLUSTERS,) = glob_wildcards(BIN_LOC + "{CLUSTERS}.fasta")
 
@@ -104,7 +104,7 @@ rule checkm:
   input:
       clusters = expand("{BIN_LOC}{CLUSTERS}.fasta", BIN_LOC = BIN_LOC, CLUSTERS = CLUSTERS),
       #wait_for = expand("analysis/bakta/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", JOBID = JOBID, CLUSTERS = CLUSTERS, ext=["faa", "txt", "tsv"]),
-      database = "benchmarks/checkm/{JOBID}_checkmdb.log"
+      database_log = "benchmarks/checkm/{JOBID}_checkmdb.log"
   output:
       log = expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID),
   params:
@@ -113,7 +113,7 @@ rule checkm:
       refin = ASM_LOC,
       database = "databases/checkm/"
   benchmark:
-      expand("benchmarks/checkm/{JOBID}_checkm.tsv", JOBID = JOBID)
+      "benchmarks/checkm/{JOBID}_checkm.tsv"
   conda:
       "envs/checkm.yaml"
   resources:
@@ -122,8 +122,8 @@ rule checkm:
       mem=cluster["__default__"]["mem"]
   shell:
       """
-      checkm_db={params.database}
-      echo ${{checkm_db}} | checkm data setRoot ${{checkm_db}}
+      checkmdb={params.database}
+      echo ${{checkmdb}} | checkm data setRoot ${{checkmdb}}
       checkm lineage_wf -f {output.log} --tab_table -x fasta -t {resources.threads} {params.input_loc} {params.out}
       """
 
