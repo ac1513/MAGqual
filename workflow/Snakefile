@@ -114,8 +114,6 @@ rule checkm:
       database = "databases/checkm/"
   conda:
       "envs/checkm.yaml"
-  benchmark:
-      "benchmarks/checkm/{JOBID}_checkm.tsv"
   resources:
       threads=cluster["checkm"]["threads"],
       time =cluster["checkm"]["time"],
