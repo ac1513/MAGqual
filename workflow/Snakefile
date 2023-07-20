@@ -104,7 +104,7 @@ rule checkm:
   input:
       clusters = expand("{BIN_LOC}{CLUSTERS}.fasta", BIN_LOC = BIN_LOC, CLUSTERS = CLUSTERS),
       #wait_for = expand("analysis/bakta/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", JOBID = JOBID, CLUSTERS = CLUSTERS, ext=["faa", "txt", "tsv"]),
-      database_log = "benchmarks/checkm/{JOBID}_checkmdb.log"
+      database_log = expand("benchmarks/checkm/{JOBID}_checkmdb.log", JOBID = JOBID)
   output:
       log = expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID),
   params:
@@ -114,6 +114,8 @@ rule checkm:
       database = "databases/checkm/"
   conda:
       "envs/checkm.yaml"
+  benchmark:
+      "benchmarks/checkm/{JOBID}_checkm.tsv"
   resources:
       threads=cluster["checkm"]["threads"],
       time =cluster["checkm"]["time"],
