@@ -111,8 +111,8 @@ rule checkm:
       input = BIN_LOC,
       refin = ASM_LOC,
       database = "databases/checkm/"
-benchmark:
-    "benchmarks/checkm/{JOBID}_{CLUSTERS}_checkm.tsv"
+  benchmark:
+      "benchmarks/checkm/{JOBID}_{CLUSTERS}_checkm.tsv"
   conda:
       "envs/checkm.yaml"
   resources:
