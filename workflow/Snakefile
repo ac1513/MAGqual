@@ -28,7 +28,7 @@ rule all:
         expand("analysis/{JOBID}_mag_qual_statistics.csv", JOBID = JOBID)
 
 rule bakta_db: 
-    output: "benchmarks/bakta/{JOBID}_baktadb.log"
+    output: "database/bakta/{JOBID}_baktadb.log"
     conda:
         "envs/bakta_env.yaml"
     params: 
@@ -49,13 +49,13 @@ rule bakta_db:
             rm db-light.tar.gz
             amrfinder_update --force_update --database databases/bakta/amrfinderplus-db/
         fi
-        touch benchmarks/bakta/{JOBID}_baktadb.log
+        touch database/bakta/{JOBID}_baktadb.log
         """
 
 rule bakta:
     input:
         clusters = expand("{BIN_LOC}{{CLUSTERS}}.fasta", BIN_LOC=BIN_LOC),
-        database = expand("benchmarks/bakta/{JOBID}_baktadb.log", JOBID = JOBID)
+        database = expand("databases/bakta/{JOBID}_baktadb.log", JOBID = JOBID)
     output:
         file = expand("analysis/bakta/{{JOBID}}/{{CLUSTERS}}/{{CLUSTERS}}.{ext}", ext=[ "faa", "txt", "tsv"])
     params:
@@ -77,7 +77,7 @@ rule bakta:
 
 
 rule checkm_db: 
-    output: "benchmarks/checkm/{JOBID}_checkmdb.log"
+    output: "databases/checkm/{JOBID}_checkmdb.log"
     conda:
         "envs/checkm.yaml"
     params: 
@@ -104,7 +104,7 @@ rule checkm:
   input:
       clusters = expand("{BIN_LOC}{CLUSTERS}.fasta", BIN_LOC = BIN_LOC, CLUSTERS = CLUSTERS),
       #wait_for = expand("analysis/bakta/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", JOBID = JOBID, CLUSTERS = CLUSTERS, ext=["faa", "txt", "tsv"]),
-      database_log = expand("benchmarks/checkm/{JOBID}_checkmdb.log", JOBID = JOBID)
+      database_log = expand("database/checkm/{JOBID}_checkmdb.log", JOBID = JOBID)
   output:
       log = expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID),
   params:
