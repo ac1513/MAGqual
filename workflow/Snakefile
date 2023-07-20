@@ -33,6 +33,8 @@ rule bakta_db:
         "envs/bakta_env.yaml"
     params: 
         database = baktadb
+    benchmark:
+        "benchmarks/bakta/{JOBID}_baktadb.tsv"
     shell:
         """
         if [ ! -z {params.database} ] && [ -d {params.database} ]; then 
@@ -59,6 +61,8 @@ rule bakta:
         dir = "analysis/bakta/{JOBID}/{CLUSTERS}/",
         prefix = "{CLUSTERS}",
         database = "databases/bakta/"
+    benchmark:
+        "benchmarks/bakta/{JOBID}_{CLUSTERS}_bakta.tsv"
     conda:
         "envs/bakta_env.yaml"
     resources:
