@@ -102,18 +102,18 @@ rule checkm_db:
 
 rule checkm:
   input:
-      expand("{BIN_LOC}{CLUSTERS}.fasta", BIN_LOC = BIN_LOC, CLUSTERS = CLUSTERS),
+      clusters = expand("{BIN_LOC}{CLUSTERS}.fasta", BIN_LOC = BIN_LOC, CLUSTERS = CLUSTERS),
       #wait_for = expand("analysis/bakta/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", JOBID = JOBID, CLUSTERS = CLUSTERS, ext=["faa", "txt", "tsv"]),
       database = "benchmarks/checkm/{JOBID}_checkmdb.log"
   output:
       log = expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID),
   params:
       out = expand("analysis/checkm/{JOBID}", JOBID=JOBID),
-      input = BIN_LOC,
+      input_loc = BIN_LOC,
       refin = ASM_LOC,
       database = "databases/checkm/"
   benchmark:
-      expand("benchmarks/checkm/{JOBID}_checkm.tsv", JOBID = JOBID)
+      "benchmarks/checkm/{JOBID}_checkm.tsv"
   conda:
       "envs/checkm.yaml"
   resources:
@@ -124,7 +124,7 @@ rule checkm:
       """
       checkm_db={params.database}
       echo ${{checkm_db}} | checkm data setRoot ${{checkm_db}}
-      checkm lineage_wf -f {output.log} --tab_table -x fasta -t {resources.threads} {params.input} {params.out}
+      checkm lineage_wf -f {output.log} --tab_table -x fasta -t {resources.threads} {params.input_loc} {params.out}
       """
 
 rule seqkit:
