@@ -28,7 +28,7 @@ rule all:
         expand("analysis/{JOBID}_mag_qual_statistics.csv", JOBID = JOBID)
 
 rule bakta_db: 
-    output: "databases/bakta/version.json"
+    output: "databases/bakta/version.json", "benchmarks/bakta/{JOBID}_baktadb.log"
     conda:
         "envs/bakta_env.yaml"
     params: 
@@ -49,6 +49,7 @@ rule bakta_db:
             rm db-light.tar.gz
             amrfinder_update --force_update --database databases/bakta/amrfinderplus-db/
         fi
+        touch benchmarks/bakta/{JOBID}_baktadb.log
         """
 
 rule bakta:
