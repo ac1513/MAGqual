@@ -104,9 +104,9 @@ rule checkm:
   input:
       clusters = expand("{BIN_LOC}{CLUSTERS}.fasta", BIN_LOC = BIN_LOC, CLUSTERS = CLUSTERS),
       #wait_for = expand("analysis/bakta/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", JOBID = JOBID, CLUSTERS = CLUSTERS, ext=["faa", "txt", "tsv"]),
-      database_log = expand("databases/checkm/{JOBID}_checkmdb.log", JOBID = JOBID)
+      database_log = expand("databases/checkm/{JOBID}/{JOBID}_checkmdb.log", JOBID = JOBID)
   output:
-      log = expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID),
+      log = "analysis/checkm/{JOBID}/{JOBID}_checkm.log",
   params:
       out = expand("analysis/checkm/{JOBID}", JOBID=JOBID),
       input_loc = BIN_LOC,
