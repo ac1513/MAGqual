@@ -19,6 +19,11 @@ if BIN_LOC.endswith("/") == False :
     BIN_LOC = BIN_LOC + "/"
 
 (CLUSTERS,) = glob_wildcards(BIN_LOC + "{CLUSTERS}.fasta")
+ext = ".fasta"
+
+if len(CLUSTERS) == 0:
+    (CLUSTERS,) = glob_wildcards(BIN_LOC + "{CLUSTERS}.fa")
+    ext = ".fa"
 
 rule all:
     input:
@@ -54,7 +59,7 @@ rule bakta_db:
 
 rule bakta:
     input:
-        clusters = expand("{BIN_LOC}{{CLUSTERS}}.fasta", BIN_LOC=BIN_LOC),
+        clusters = expand("{BIN_LOC}{{CLUSTERS}}{ext}", BIN_LOC=BIN_LOC, ext=ext),
         database = expand("databases/bakta/{JOBID}_baktadb.log", JOBID = JOBID)
     output:
         file = expand("analysis/bakta/{{JOBID}}/{{CLUSTERS}}/{{CLUSTERS}}.{ext}", ext=[ "faa", "txt", "tsv"])
@@ -102,7 +107,7 @@ rule checkm_db:
 
 rule checkm:
   input:
-      clusters = expand("{BIN_LOC}{CLUSTERS}.fasta", BIN_LOC = BIN_LOC, CLUSTERS = CLUSTERS),
+      clusters = expand("{BIN_LOC}{CLUSTERS}{ext}", BIN_LOC = BIN_LOC, CLUSTERS = CLUSTERS,ext=ext),
       #wait_for = expand("analysis/bakta/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", JOBID = JOBID, CLUSTERS = CLUSTERS, ext=["faa", "txt", "tsv"]),
       database_log = expand("databases/checkm/{JOBID}_checkmdb.log", JOBID = JOBID)
   output:
