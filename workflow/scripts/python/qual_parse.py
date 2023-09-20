@@ -63,6 +63,7 @@ parser.add_argument('bakta_loc', help='directory containing all bakta output for
 parser.add_argument('seqkit_log', help='file containing the seqkit output for all clusters', type=str)
 parser.add_argument('bin_loc', help='directory containing fasta files for all clusters', type=str)
 parser.add_argument('jobid', help='prefix for current jobs', type=str)
+parser.add_argument('ext', help='file extension of MAGs', type=str)
 
 args = parser.parse_args()
 output = args.output
@@ -71,6 +72,7 @@ bakta_loc = args.bakta_loc
 seqkit_log = args.seqkit_log
 bin_loc = args.bin_loc
 job_id = args.jobid
+ext = args.ext
 
 comp_software = "CheckM v.1.0.13"
 comp_approach = "Marker gene"
@@ -103,7 +105,7 @@ checkm_df = checkm_df.drop(checkm_df.columns[[1, 2, 3, 4, 5, 6, 7, 8, 9]], axis=
 # =============================================================================
 seqkit_df = pd.read_csv(seqkit_log, sep = "\t")
 seqkit_df = seqkit_df[["file", "max_len"]]
-seqkit_df["file"] = seqkit_df["file"].str.replace('.fasta','', regex=True)
+seqkit_df["file"] = seqkit_df["file"].str.replace(ext,'', regex=True)
 seqkit_df["file"] = seqkit_df["file"].str.split("/").str[-1]
 seqkit_df.set_index("file", inplace=True)
 seqkit_df.rename(columns={"max_len":"Max_contig_length"}, inplace = True)
@@ -235,24 +237,24 @@ os.makedirs(new_loc + "low_qual", exist_ok=True)
 os.makedirs(new_loc + "failed", exist_ok=True)
 
 for high in high_qual_clusters:
-    file = location + high + ".fasta"
-    copyfile(file, new_loc +"high_qual/"+high+".fasta")
+    file = location + high + ext
+    copyfile(file, new_loc +"high_qual/"+high+ext)
 
 for nc in near_comp_clusters:
-    file = location + nc + ".fasta"
-    copyfile(file, new_loc +"near_comp/"+nc+".fasta")
+    file = location + nc + ext
+    copyfile(file, new_loc +"near_comp/"+nc+ext)
 
 for med in med_qual_clusters:
-    file = location + med + ".fasta"
-    copyfile(file, new_loc+"med_qual/"+med+".fasta")
+    file = location + med + ext
+    copyfile(file, new_loc+"med_qual/"+med+ext)
 
 for low in low_qual_clusters:
-    file = location + low + ".fasta"
-    copyfile(file, new_loc+"low_qual/"+low+".fasta")
+    file = location + low + ext
+    copyfile(file, new_loc+"low_qual/"+low+ext)
 
 for NA_bin in NA:
-    file = location + NA_bin + ".fasta"
-    copyfile(file, new_loc+"failed/"+NA_bin+".fasta")
+    file = location + NA_bin + ext
+    copyfile(file, new_loc+"failed/"+NA_bin+ext)
 
 # =============================================================================
 # OUTPUT CREATED HERE

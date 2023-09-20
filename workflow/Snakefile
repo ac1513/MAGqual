@@ -170,5 +170,5 @@ rule high_mags:
         time=cluster["__default__"]["time"]
     shell:
         """
-        python workflow/scripts/python/qual_parse.py {params.out_loc} {input.checkm} {params.bakta} {input.seqkit} {params.bin_loc} {params.jobid} > {output.txt}
+        python workflow/scripts/python/qual_parse.py {params.out_loc} {input.checkm} {params.bakta} {input.seqkit} {params.bin_loc} {params.jobid} {ext} > {output.txt}
         """
