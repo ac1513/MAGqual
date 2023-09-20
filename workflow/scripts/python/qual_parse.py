@@ -117,10 +117,11 @@ checkm_df = pd.merge(checkm_df, seqkit_df, left_index=True, right_index=True, ho
 
 high_qual_clusters= []
 near_comp_clusters = []
-r16s_comp_clusters = []
+r16s_comp_clusters = []ß
 trna_num = {}
 for cluster in all_clusters:
-    loc = str(bakta_loc + cluster + '/' + cluster + '.tsv') #change this too 
+    cluster = str(cluster)
+    loc = str(bakta_loc + str(cluster) + '/' + str(cluster) + '.tsv') #change this too 
     # loc = str(str(cluster) + '.tsv') #don't copy this bit change it !
     for name in glob.glob(loc):
         bakta_file = name
