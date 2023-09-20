@@ -129,7 +129,7 @@ rule checkm:
       """
       checkmdb={params.database}
       echo ${{checkmdb}} | checkm data setRoot ${{checkmdb}}
-      checkm lineage_wf -f {output.log} --force_overwrite --tab_table -x {{ext}} -t {resources.threads} {params.input_loc} {params.out}
+      checkm lineage_wf -f {output.log} --force_overwrite --tab_table -x {ext} -t {resources.threads} {params.input_loc} {params.out}
       """
 
 rule seqkit:
