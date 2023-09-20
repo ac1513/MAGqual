@@ -117,7 +117,7 @@ checkm_df = pd.merge(checkm_df, seqkit_df, left_index=True, right_index=True, ho
 
 high_qual_clusters= []
 near_comp_clusters = []
-r16s_comp_clusters = []ß
+r16s_comp_clusters = []
 trna_num = {}
 for cluster in all_clusters:
     cluster = str(cluster)
