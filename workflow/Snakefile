@@ -26,7 +26,7 @@ if len(CLUSTERS) == 0:
     ext = ".fa"
     if len(CLUSTERS) == 0:
         (CLUSTERS,) = glob_wildcards(BIN_LOC + "{CLUSTERS}.fna")
-        ext = "fna"
+        ext = ".fna"
         if len(CLUSTERS) == 0:
             print("No suitable MAG format found in this [" + BIN_LOC + "] location. MAGs need a .fasta, .fa or .fna file extension")
 
