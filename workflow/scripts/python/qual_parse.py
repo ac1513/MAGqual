@@ -238,23 +238,23 @@ os.makedirs(new_loc + "low_qual", exist_ok=True)
 os.makedirs(new_loc + "failed", exist_ok=True)
 
 for high in high_qual_clusters:
-    file = location + high + ext
+    file = location + str(high) + ext
     copyfile(file, new_loc +"high_qual/"+high+ext)
 
 for nc in near_comp_clusters:
-    file = location + nc + ext
+    file = location + str(nc) + ext
     copyfile(file, new_loc +"near_comp/"+nc+ext)
 
 for med in med_qual_clusters:
-    file = location + med + ext
+    file = location + str(med) + ext
     copyfile(file, new_loc+"med_qual/"+med+ext)
 
 for low in low_qual_clusters:
-    file = location + low + ext
+    file = location + str(low) + ext
     copyfile(file, new_loc+"low_qual/"+low+ext)
 
 for NA_bin in NA:
-    file = location + NA_bin + ext
+    file = location + str(NA_bin) + ext
     copyfile(file, new_loc+"failed/"+NA_bin+ext)
 
 # =============================================================================
