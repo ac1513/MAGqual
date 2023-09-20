@@ -134,7 +134,7 @@ rule checkm:
 
 rule seqkit:
     input:
-        clusters = expand("{BIN_LOC}{CLUSTERS}.fasta", BIN_LOC = BIN_LOC, CLUSTERS = CLUSTERS),
+        clusters = expand("{BIN_LOC}{CLUSTERS}{ext}", BIN_LOC = BIN_LOC, CLUSTERS = CLUSTERS, ext=ext),
         checkm = expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID)
     output:
         tsv = "analysis/{JOBID}_seqkit_stats.tsv"
