@@ -193,7 +193,7 @@ for cluster in all_clusters:
 # =============================================================================
 
 checkm_df.loc[checkm_df.index.isin(near_comp_clusters), "Quality"] = "Near Complete"
-
+checkm_df["16S_Recovered"] = ""
 checkm_df.loc[checkm_df.index.isin(r16s_comp_clusters), "16S_Recovered"] = "Y"
 checkm_df["16S_Recovered"] = checkm_df["16S_Recovered"].fillna("N")
 
