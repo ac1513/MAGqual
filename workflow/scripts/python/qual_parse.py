@@ -89,6 +89,7 @@ colour_dict = dict({'High Quality':'#50C5B7',
 checkm_df = pd.read_csv(checkm_log, sep = "\t")
 checkm_df['Quality'] = checkm_df.apply(lambda x: qual_cluster(x['Completeness'], x['Contamination']), axis=1)
 checkm_df[['Size_bp', 'No_contigs', 'N50_length', '16S_Software']] = checkm_df.apply(lambda x: bsearch(bakta_loc, x["Bin Id"]), axis = 1)
+checkm_df["Bin Id"] = checkm_df["Bin Id"].astype(str)
 
 checkm_df = checkm_df.set_index("Bin Id")
 
