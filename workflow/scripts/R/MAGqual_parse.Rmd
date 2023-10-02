@@ -17,7 +17,7 @@ library(tidyr)
 library(DT)
 library(ggplot2)
 library(plotly)
-use_virtualenv("~/R_test")
+use_condaenv()
 ```
 
 
