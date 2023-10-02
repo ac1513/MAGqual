@@ -17,7 +17,6 @@ library(tidyr)
 library(DT)
 library(ggplot2)
 library(plotly)
-use_python("/Users/ac1513/miniconda3/envs/basic3_intel/bin/python")
 ```
 
 
