@@ -21,11 +21,12 @@ use_condaenv()
 ```
 
 
-```{python, include=FALSE, warning=FALSE}
+```{python, include=FALSE}
 import pandas as pd
 import glob
 
 files = glob.glob("analysis/*mag_qual_statistics.csv")
+print(files)
 quality = pd.DataFrame(index= ['High Quality', 'Near Complete', 'Medium Quality', 'Low Quality', 'Failed'])
 summary = pd.DataFrame()
 names = []
