@@ -55,7 +55,7 @@ for file in files:
     
 quality = quality.T.fillna(0) 
 summary = summary.T.fillna(0)
-print(stats)
+print(summary)
 ```
 
 ```{r, echo=FALSE, warning=FALSE}
