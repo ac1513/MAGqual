@@ -187,7 +187,9 @@ rule report_gen:
         html = "{JOBID}_report.html"
     conda:
         "envs/R.yaml"
+    params:
+        dir = str(os.getcwd())
     shell:
         """
-        R -e "prefix='{JOBID}'; rmarkdown::render('workflow/scripts/R/MAGqual_parse.Rmd', output_file = '{output.html}')"
+        R -e "prefix='{JOBID}'; rmarkdown::render('workflow/scripts/R/MAGqual_parse.Rmd', output_file = '{output.html}', knit_root_dir='{params.dir}')"
         """
