@@ -36,7 +36,8 @@ rule all:
         expand("analysis/bakta/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", JOBID = JOBID, CLUSTERS = CLUSTERS, ext=[ "faa", "txt", "tsv"]),
         expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID),
         expand("analysis/genome_bins/{JOBID}_qual_MAGs.txt", JOBID = JOBID),
-        expand("analysis/{JOBID}_mag_qual_statistics.csv", JOBID = JOBID)
+        expand("analysis/{JOBID}_mag_qual_statistics.csv", JOBID = JOBID),
+        expand("{JOBID}_report.html", JOBID = JOBID)
 
 rule bakta_db: 
     output: "databases/bakta/{JOBID}_baktadb.log"
@@ -177,4 +178,16 @@ rule high_mags:
     shell:
         """
         python workflow/scripts/python/qual_parse.py {params.out_loc} {input.checkm} {params.bakta} {input.seqkit} {params.bin_loc} {params.jobid} {ext} > {output.txt}
+        """
+
+rule report_gen:
+    input:
+        stats = expand("analysis/{JOBID}_mag_qual_statistics.csv", JOBID = JOBID)
+    output:
+        html = "{JOBID}_report.html"
+    conda:
+        "envs/R.yaml"
+    shell:
+        """
+        R -e "prefix='{JOBID}'; rmarkdown::render('workflow/scripts/R/MAGqual_parse.Rmd', output_file = '{output.html}')"
         """
