@@ -55,10 +55,10 @@ for file in files:
     
 quality = quality.T.fillna(0) 
 summary = summary.T.fillna(0)
-print(summary)
 ```
 
 ```{r, echo=FALSE, warning=FALSE}
+print(getwd())
 summary <- py$summary
 quality <- py$quality
 quality$"Total Bins" <- rowSums(quality)
