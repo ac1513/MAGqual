@@ -63,6 +63,7 @@ parser.add_argument('bakta_loc', help='directory containing all bakta output for
 parser.add_argument('seqkit_log', help='file containing the seqkit output for all clusters', type=str)
 parser.add_argument('bin_loc', help='directory containing fasta files for all clusters', type=str)
 parser.add_argument('jobid', help='prefix for current jobs', type=str)
+parser.add_argument('ext', help='file extension of MAGs', type=str)
 
 args = parser.parse_args()
 output = args.output
@@ -71,6 +72,7 @@ bakta_loc = args.bakta_loc
 seqkit_log = args.seqkit_log
 bin_loc = args.bin_loc
 job_id = args.jobid
+ext = args.ext
 
 comp_software = "CheckM v.1.0.13"
 comp_approach = "Marker gene"
@@ -87,6 +89,7 @@ colour_dict = dict({'High Quality':'#50C5B7',
 checkm_df = pd.read_csv(checkm_log, sep = "\t")
 checkm_df['Quality'] = checkm_df.apply(lambda x: qual_cluster(x['Completeness'], x['Contamination']), axis=1)
 checkm_df[['Size_bp', 'No_contigs', 'N50_length', '16S_Software']] = checkm_df.apply(lambda x: bsearch(bakta_loc, x["Bin Id"]), axis = 1)
+checkm_df["Bin Id"] = checkm_df["Bin Id"].astype(str)
 
 checkm_df = checkm_df.set_index("Bin Id")
 
@@ -103,7 +106,7 @@ checkm_df = checkm_df.drop(checkm_df.columns[[1, 2, 3, 4, 5, 6, 7, 8, 9]], axis=
 # =============================================================================
 seqkit_df = pd.read_csv(seqkit_log, sep = "\t")
 seqkit_df = seqkit_df[["file", "max_len"]]
-seqkit_df["file"] = seqkit_df["file"].str.replace('.fasta','', regex=True)
+seqkit_df["file"] = seqkit_df["file"].str.replace(ext,'', regex=True)
 seqkit_df["file"] = seqkit_df["file"].str.split("/").str[-1]
 seqkit_df.set_index("file", inplace=True)
 seqkit_df.rename(columns={"max_len":"Max_contig_length"}, inplace = True)
@@ -118,7 +121,8 @@ near_comp_clusters = []
 r16s_comp_clusters = []
 trna_num = {}
 for cluster in all_clusters:
-    loc = str(bakta_loc + cluster + '/' + cluster + '.tsv') #change this too 
+    cluster = str(cluster)
+    loc = str(bakta_loc + str(cluster) + '/' + str(cluster) + '.tsv') #change this too 
     # loc = str(str(cluster) + '.tsv') #don't copy this bit change it !
     for name in glob.glob(loc):
         bakta_file = name
@@ -189,7 +193,7 @@ for cluster in all_clusters:
 # =============================================================================
 
 checkm_df.loc[checkm_df.index.isin(near_comp_clusters), "Quality"] = "Near Complete"
-
+checkm_df["16S_Recovered"] = ""
 checkm_df.loc[checkm_df.index.isin(r16s_comp_clusters), "16S_Recovered"] = "Y"
 checkm_df["16S_Recovered"] = checkm_df["16S_Recovered"].fillna("N")
 
@@ -235,24 +239,24 @@ os.makedirs(new_loc + "low_qual", exist_ok=True)
 os.makedirs(new_loc + "failed", exist_ok=True)
 
 for high in high_qual_clusters:
-    file = location + high + ".fasta"
-    copyfile(file, new_loc +"high_qual/"+high+".fasta")
+    file = location + str(high) + ext
+    copyfile(file, new_loc +"high_qual/"+str(high)+ext)
 
 for nc in near_comp_clusters:
-    file = location + nc + ".fasta"
-    copyfile(file, new_loc +"near_comp/"+nc+".fasta")
+    file = location + str(nc) + ext
+    copyfile(file, new_loc +"near_comp/"+str(nc)+ext)
 
 for med in med_qual_clusters:
-    file = location + med + ".fasta"
-    copyfile(file, new_loc+"med_qual/"+med+".fasta")
+    file = location + str(med) + ext
+    copyfile(file, new_loc+"med_qual/"+str(med)+ext)
 
 for low in low_qual_clusters:
-    file = location + low + ".fasta"
-    copyfile(file, new_loc+"low_qual/"+low+".fasta")
+    file = location + str(low) + ext
+    copyfile(file, new_loc+"low_qual/"+str(low)+ext)
 
 for NA_bin in NA:
-    file = location + NA_bin + ".fasta"
-    copyfile(file, new_loc+"failed/"+NA_bin+".fasta")
+    file = location + str(NA_bin) + ext
+    copyfile(file, new_loc+"failed/"+str(NA_bin)+ext)
 
 # =============================================================================
 # OUTPUT CREATED HERE

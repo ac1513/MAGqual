@@ -19,20 +19,34 @@ if BIN_LOC.endswith("/") == False :
     BIN_LOC = BIN_LOC + "/"
 
 (CLUSTERS,) = glob_wildcards(BIN_LOC + "{CLUSTERS}.fasta")
+ext = ".fasta"
+
+if len(CLUSTERS) == 0:
+    (CLUSTERS,) = glob_wildcards(BIN_LOC + "{CLUSTERS}.fa")
+    ext = ".fa"
+    if len(CLUSTERS) == 0:
+        (CLUSTERS,) = glob_wildcards(BIN_LOC + "{CLUSTERS}.fna")
+        ext = ".fna"
+        if len(CLUSTERS) == 0:
+            print("No suitable MAG format found in this [" + BIN_LOC + "] location. MAGs need a .fasta, .fa or .fna file extension")
+
 
 rule all:
     input:
         expand("analysis/bakta/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", JOBID = JOBID, CLUSTERS = CLUSTERS, ext=[ "faa", "txt", "tsv"]),
         expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID),
         expand("analysis/genome_bins/{JOBID}_qual_MAGs.txt", JOBID = JOBID),
-        expand("analysis/{JOBID}_mag_qual_statistics.csv", JOBID = JOBID)
+        expand("analysis/{JOBID}_mag_qual_statistics.csv", JOBID = JOBID),
+        expand("{JOBID}_report.html", JOBID = JOBID)
 
 rule bakta_db: 
-    output: "databases/bakta/version.json"
+    output: "databases/bakta/{JOBID}_baktadb.log"
     conda:
         "envs/bakta_env.yaml"
     params: 
         database = baktadb
+    benchmark:
+        "benchmarks/{JOBID}/{JOBID}_baktadb.tsv"
     shell:
         """
         if [ ! -z {params.database} ] && [ -d {params.database} ]; then 
@@ -47,18 +61,21 @@ rule bakta_db:
             rm db-light.tar.gz
             amrfinder_update --force_update --database databases/bakta/amrfinderplus-db/
         fi
+        touch databases/bakta/{JOBID}_baktadb.log
         """
 
 rule bakta:
     input:
-        clusters = expand("{BIN_LOC}{{CLUSTERS}}.fasta", BIN_LOC=BIN_LOC),
-        database = expand("databases/bakta/version.json")
+        clusters = expand("{BIN_LOC}{{CLUSTERS}}{ext}", BIN_LOC=BIN_LOC, ext=ext),
+        database = expand("databases/bakta/{JOBID}_baktadb.log", JOBID = JOBID)
     output:
         file = expand("analysis/bakta/{{JOBID}}/{{CLUSTERS}}/{{CLUSTERS}}.{ext}", ext=[ "faa", "txt", "tsv"])
     params:
         dir = "analysis/bakta/{JOBID}/{CLUSTERS}/",
         prefix = "{CLUSTERS}",
         database = "databases/bakta/"
+    benchmark:
+        "benchmarks/{JOBID}/{JOBID}_{{CLUSTERS}}_bakta.tsv"
     conda:
         "envs/bakta_env.yaml"
     resources:
@@ -72,11 +89,13 @@ rule bakta:
 
 
 rule checkm_db: 
-    output: "databases/checkm/selected_marker_sets.tsv"
+    output: "databases/checkm/{JOBID}_checkmdb.log"
     conda:
         "envs/checkm.yaml"
     params: 
         database = checkmdb
+    benchmark:
+        "benchmarks/{JOBID}/{JOBID}_checkmdb.tsv"
     shell:
         """
         if [ ! -z {params.database} ] && [ -d {params.database} ]; then 
@@ -90,39 +109,44 @@ rule checkm_db:
             tar -xzf checkm_data_2015_01_16.tar.gz -C databases/checkm/
             rm checkm_data_2015_01_16.tar.gz
         fi
+        touch databases/checkm/{JOBID}_checkmdb.log
         """
 
 rule checkm:
   input:
-      expand("{BIN_LOC}{CLUSTERS}.fasta", BIN_LOC = BIN_LOC, CLUSTERS = CLUSTERS),
+      clusters = expand("{BIN_LOC}{CLUSTERS}{ext}", BIN_LOC = BIN_LOC, CLUSTERS = CLUSTERS,ext=ext),
       #wait_for = expand("analysis/bakta/{JOBID}/{CLUSTERS}/{CLUSTERS}.{ext}", JOBID = JOBID, CLUSTERS = CLUSTERS, ext=["faa", "txt", "tsv"]),
-      database = "databases/checkm/selected_marker_sets.tsv"
+      database_log = expand("databases/checkm/{JOBID}_checkmdb.log", JOBID = JOBID)
   output:
-      log = expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID),
+      log = "analysis/checkm/{JOBID}/{JOBID}_checkm.log",
   params:
       out = expand("analysis/checkm/{JOBID}", JOBID=JOBID),
-      input = BIN_LOC,
+      input_loc = BIN_LOC,
       refin = ASM_LOC,
       database = "databases/checkm/"
+  benchmark:
+      "benchmarks/{JOBID}/{JOBID}_checkm.tsv"
   conda:
       "envs/checkm.yaml"
   resources:
-    threads=cluster["checkm"]["threads"],
-    time =cluster["checkm"]["time"],
-    mem=cluster["__default__"]["mem"]
+      threads=cluster["checkm"]["threads"],
+      time =cluster["checkm"]["time"],
+      mem=cluster["__default__"]["mem"]
   shell:
       """
-      checkm_db={params.database}
-      echo ${{checkm_db}} | checkm data setRoot ${{checkm_db}}
-      checkm lineage_wf -f {output.log} --tab_table -x fasta -t {resources.threads} {params.input} {params.out}
+      checkmdb={params.database}
+      echo ${{checkmdb}} | checkm data setRoot ${{checkmdb}}
+      checkm lineage_wf -f {output.log} --force_overwrite --tab_table -x {ext} -t {resources.threads} {params.input_loc} {params.out}
       """
 
 rule seqkit:
     input:
-        clusters = expand("{BIN_LOC}{CLUSTERS}.fasta", BIN_LOC = BIN_LOC, CLUSTERS = CLUSTERS),
+        clusters = expand("{BIN_LOC}{CLUSTERS}{ext}", BIN_LOC = BIN_LOC, CLUSTERS = CLUSTERS, ext=ext),
         checkm = expand("analysis/checkm/{JOBID}/{JOBID}_checkm.log", JOBID=JOBID)
     output:
         tsv = "analysis/{JOBID}_seqkit_stats.tsv"
+    benchmark:
+        "benchmarks/{JOBID}/{JOBID}_seqkit.tsv"
     conda:
         "envs/seqkit.yaml"
     shell:
@@ -143,6 +167,8 @@ rule high_mags:
         bin_loc = BIN_LOC,
         jobid = JOBID,
         out_loc = "analysis/genome_bins/"
+    benchmark:
+        "benchmarks/{JOBID}/{JOBID}_python.tsv"
     conda :
         "envs/py3.yaml"
     resources:
@@ -151,5 +177,19 @@ rule high_mags:
         time=cluster["__default__"]["time"]
     shell:
         """
-        python workflow/scripts/python/qual_parse.py {params.out_loc} {input.checkm} {params.bakta} {input.seqkit} {params.bin_loc} {params.jobid} > {output.txt}
+        python workflow/scripts/python/qual_parse.py {params.out_loc} {input.checkm} {params.bakta} {input.seqkit} {params.bin_loc} {params.jobid} {ext} > {output.txt}
+        """
+
+rule report_gen:
+    input:
+        stats = expand("analysis/{JOBID}_mag_qual_statistics.csv", JOBID = JOBID)
+    output:
+        html = "{JOBID}_report.html"
+    conda:
+        "envs/R.yaml"
+    params:
+        dir = str(os.getcwd())
+    shell:
+        """
+        R -e "prefix='{JOBID}'; rmarkdown::render('workflow/scripts/R/MAGqual_parse.Rmd', output_file = '{params.dir}/{output.html}', knit_root_dir='{params.dir}')"
         """
