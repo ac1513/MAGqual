@@ -108,3 +108,14 @@ NOTE: When using the `--cluster slurm` option with MAGqual.py, the following is 
 ```
 --cluster-config config/cluster.json --cluster "sbatch -t {cluster.time} -c {cluster.threads} --mem-per-cpu {cluster.mem}
 ```
+
+# Citation
+If you use MAGqual in your research please cite the following:
+> MAGqual: A standalone pipeline to assess the quality of metagenome-assembled genomes
+> Annabel Cansdale, James P.J. Chong
+> bioRxiv 2023.12.13.571510; doi: https://doi.org/10.1101/2023.12.13.571510
+
+MAGqual would not be possible without the following software, please cite them too:
+* Bakta https://doi.org/10.1099/mgen.0.000685
+* CheckM https://doi.org/10.1101/gr.186072.114
+* SeqKit https://doi.org/10.1371/journal.pone.0163962
