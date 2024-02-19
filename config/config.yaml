@@ -3,5 +3,5 @@ JOBID: "snake_split_bin_test"
 ASM_LOC: "/mnt/lustre/groups/biol-chong-2019/development/MAGqual/canu10_med.fasta"
 BIN_LOC: "/mnt/lustre/groups/biol-chong-2019/development/MAGqual/clusters/"
 #OPTIONAL
-checkm_db: "/mnt/lustre/groups/biol-chong-2019/databases/checkm_data"
+checkm_db: ""
 bakta_db: ""
