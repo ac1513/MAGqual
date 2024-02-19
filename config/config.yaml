@@ -1,7 +1,7 @@
 #REQUIRED OPTIONS
-JOBID: "snake_split_bin_test"
-ASM_LOC: "/mnt/lustre/groups/biol-chong-2019/development/MAGqual/canu10_med.fasta"
-BIN_LOC: "/mnt/lustre/groups/biol-chong-2019/development/MAGqual/clusters/"
+JOBID: "bin_test"
+ASM_LOC: "canu10_med.fasta"
+BIN_LOC: "clusters/"
 #OPTIONAL
 checkm_db: ""
 bakta_db: ""
