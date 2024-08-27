@@ -1,7 +1,12 @@
-#REQUIRED OPTIONS
+# REQUIRED OPTIONS
+## JOBID = prefix for the MAGqual job
+## ASM_LOC = location of the FASTA file of the metagenomic assembly to be used by MAGqual
+## BIN_LOC = location of the directory of the metagenomic bins to be used by MAGqual
 JOBID: "snake_split_bin_test"
-ASM_LOC: "/mnt/lustre/groups/biol-chong-2019/development/MAGqual/canu10_med.fasta"
-BIN_LOC: "/mnt/lustre/groups/biol-chong-2019/development/MAGqual/clusters/"
+ASM_LOC: "development/MAGqual/canu10.fasta"
+BIN_LOC: "development/MAGqual/clusters/"
 #OPTIONAL
-checkm_db: "/mnt/lustre/groups/biol-chong-2019/databases/checkm_data"
+## checkm_db = location of the pre-downloaded checkm database directory. Leave blank (i.e. "") if MAGqual is to install the database.
+## bakta_db = location of the pre-downloaded bakta database. Leave blank (i.e. "") if MAGqual is to install the database.
+checkm_db: "databases/checkm_data"
 bakta_db: ""
