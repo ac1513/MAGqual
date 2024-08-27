@@ -94,8 +94,9 @@ The only queueing system integrated into MAGQual currently is `slurm`, however i
 ## For those familiar with Snakemake
 
 It is possible (and encouraged) to further tweak MAGqual parameters if you are familiar with Snakemake.  
-The config file: `config/config.yaml` can be edited directly for common parameters.  
-And then the pipeline can be run from the MAGqual directory using the basic Snakemake command:
+The config file: `config/config.yaml` can be edited directly for common parameters.  You can read more about Snakemake config files in the [Snakemake documentation page on Configuration](https://snakemake.readthedocs.io/en/stable/snakefiles/configuration.html) and more about the directory structure in the [Snakemake documentation page about Distribution and Reproducibility](https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html).  
+
+The pipeline can be run from the MAGqual directory using the basic Snakemake command:
 ```
 snakemake --use-conda -j 1
 ```  
