@@ -2,6 +2,8 @@
 
 [![Snakemake](https://img.shields.io/badge/snakemake-≥6.17.1-brightgreen.svg?style=flat)](https://snakemake.readthedocs.io)
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13384337.svg)](https://doi.org/10.5281/zenodo.13384337)
+
 MAGqual is a command line tool built in Snakemake [(Mölder et al. 2021)](https://f1000research.com/articles/10-33/v2) that will evaluate the quality of metagenomic bins and generate required metadata in line with the MIMAG standards (as outlined in [Bowers et al. 2017](https://www.nature.com/articles/nbt.3893)). 
 
 You can view an example [MAGqual output here](https://ac1513.github.io/MAGqual/MAGqual_manuscript_report.html).
